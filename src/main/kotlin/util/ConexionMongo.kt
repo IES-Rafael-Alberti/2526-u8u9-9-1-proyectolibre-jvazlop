@@ -1,0 +1,40 @@
+package org.iesra.util
+
+import com.mongodb.client.MongoClient
+import com.mongodb.client.MongoClients
+import com.mongodb.client.MongoCollection
+import com.mongodb.client.MongoDatabase
+import org.bson.Document
+import org.iesra.exception.MongoDBException
+
+object ConexionMongo {
+
+    private const val CADENA_CONEXION = "mongodb+srv://<usuario>:<contrasena>@cluster0.xxxxx.mongodb.net/?retryWrites=true&w=majority"
+    private const val NOMBRE_BD = "hotel_maligno"
+    private const val NOMBRE_COLECCION = "incidencias"
+
+    private var cliente: MongoClient? = null
+    private var baseDatos: MongoDatabase? = null
+
+    fun obtenerColeccion(nombreColeccion: String = NOMBRE_COLECCION): MongoCollection<Document> {
+        try {
+            if (cliente == null) {
+                cliente = MongoClients.create(CADENA_CONEXION)
+                baseDatos = cliente!!.getDatabase(NOMBRE_BD)
+            }
+            return baseDatos!!.getCollection(nombreColeccion)
+        } catch (e: Exception) {
+            throw MongoDBException("Error al conectar con MongoDB Atlas", e)
+        }
+    }
+
+    fun cerrarConexion() {
+        try {
+            cliente?.close()
+            cliente = null
+            baseDatos = null
+        } catch (e: Exception) {
+            throw MongoDBException("Error al cerrar conexion MongoDB", e)
+        }
+    }
+}
