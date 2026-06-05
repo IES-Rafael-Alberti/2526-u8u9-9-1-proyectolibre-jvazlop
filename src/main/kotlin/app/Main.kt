@@ -7,6 +7,7 @@ import org.iesra.service.ClienteService
 import org.iesra.service.ComentarioClienteService
 import org.iesra.service.IncidenciaService
 import org.iesra.service.ReservaService
+import org.iesra.repository.FicheroRepository
 import org.iesra.util.ConexionH2
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -17,6 +18,7 @@ fun main() {
     val reservaService = ReservaService()
     val comentarioService = ComentarioClienteService()
     val incidenciaService = IncidenciaService()
+    val ficheroRepo = FicheroRepository()
 
     try {
         ConexionH2.inicializarTablas()
@@ -33,7 +35,8 @@ fun main() {
         println("2. Gestionar reservas")
         println("3. Gestionar clientes")
         println("4. Gestionar incidencias")
-        println("5. Salir")
+        println("5. Importar / Exportar datos")
+        println("6. Salir")
         print("Seleccione una opcion: ")
 
         when (readlnOrNull()?.trim()) {
@@ -41,7 +44,8 @@ fun main() {
             "2" -> menuReservas(reservaService, clienteService)
             "3" -> menuClientes(clienteService, comentarioService)
             "4" -> menuIncidencias(incidenciaService)
-            "5" -> menu = false
+            "5" -> menuImportarExportar(clienteService, reservaService, incidenciaService, ficheroRepo)
+            "6" -> menu = false
             else -> println("Opcion no valida")
         }
     }
@@ -508,6 +512,96 @@ fun menuClientes(service: ClienteService, comentarioService: ComentarioClienteSe
                 }
             }
             "8" -> running = false
+            else -> println("Opcion no valida")
+        }
+    }
+}
+
+fun menuImportarExportar(
+    clienteService: ClienteService,
+    reservaService: ReservaService,
+    incidenciaService: IncidenciaService,
+    ficheroRepo: FicheroRepository
+) {
+    var menu = true
+    while (menu) {
+        println("\n--- IMPORTAR / EXPORTAR DATOS ---")
+        println("1. Exportar reservas a JSON")
+        println("2. Importar datos de prueba desde JSON")
+        println("3. Generar informe de reservas (TXT)")
+        println("4. Exportar incidencias a JSON")
+        println("5. Volver al menu principal")
+        print("Seleccione una opcion: ")
+
+        when (readlnOrNull()?.trim()) {
+            "1" -> {
+                try {
+                    val reservas = reservaService.listarReservas()
+                    ficheroRepo.exportarReservasAJson(reservas, "./reservas.json")
+                    println("Reservas exportadas a ./reservas.json")
+                } catch (e: Exception) {
+                    println("Error: ${e.message}")
+                }
+            }
+            "2" -> {
+                try {
+                    print("Nombre del fichero (ej: datos_prueba.json): ")
+                    val nombreFic = readlnOrNull()?.trim() ?: ""
+                    val ruta = if (nombreFic.startsWith("./")) nombreFic else "./$nombreFic"
+                    val datos = ficheroRepo.importarDatosPrueba(ruta)
+                    var clientesNuevos = 0
+                    var clientesSaltados = 0
+
+                    for (c in datos.clientes) {
+                        if (clienteService.existeCliente(c.id)) {
+                            clientesSaltados++
+                        } else {
+                            try {
+                                clienteService.registrarCliente(c.id, c.nombre, c.email, c.telefono)
+                                clientesNuevos++
+                            } catch (e: Exception) {
+                                println("  Error al importar cliente ${c.id}: ${e.message}")
+                            }
+                        }
+                    }
+
+                    var reservasCreadas = 0
+                    for (r in datos.reservas) {
+                        try {
+                            val fechaEnt = LocalDate.parse(r.fechaEntrada)
+                            val fechaSal = LocalDate.parse(r.fechaSalida)
+                            reservaService.crearReserva(r.idCliente, r.numeroHabitacion, fechaEnt, fechaSal)
+                            reservasCreadas++
+                        } catch (e: Exception) {
+                            println("  Error al crear reserva: ${e.message}")
+                        }
+                    }
+
+                    println("Importados $clientesNuevos clientes nuevos ($clientesSaltados ya existian)")
+                    println("Creadas $reservasCreadas reservas")
+                } catch (e: Exception) {
+                    println("Error al importar: ${e.message}")
+                }
+            }
+            "3" -> {
+                try {
+                    val reservas = reservaService.listarReservas()
+                    ficheroRepo.generarInformeReservas(reservas, "./informe_reservas.txt")
+                    println("Informe generado en ./informe_reservas.txt")
+                } catch (e: Exception) {
+                    println("Error: ${e.message}")
+                }
+            }
+            "4" -> {
+                try {
+                    val incidencias = incidenciaService.listarIncidencias()
+                    ficheroRepo.exportarIncidenciasAJson(incidencias, "./incidencias.json")
+                    println("Incidencias exportadas a ./incidencias.json")
+                } catch (e: Exception) {
+                    println("Error: ${e.message}")
+                }
+            }
+            "5" -> menu = false
             else -> println("Opcion no valida")
         }
     }
