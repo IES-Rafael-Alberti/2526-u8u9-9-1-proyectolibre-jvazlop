@@ -31,12 +31,13 @@ fun main() {
     var menu = true
     while (menu) {
         println("\n===== HOTEL MALIGNO - SISTEMA DE RESERVAS =====")
-        println("1. Nueva reserva (check-in)")
-        println("2. Gestionar reservas")
-        println("3. Gestionar clientes")
-        println("4. Gestionar incidencias")
-        println("5. Importar / Exportar datos")
-        println("6. Salir")
+        println("1. Nuevo check-in")
+        println("2. Gestion de reservas")
+        println("3. Gestion de clientes")
+        println("4. Gestion de incidencias")
+        println("5. Importacion / Exportacion de datos")
+        println("6. Check-out")
+        println("7. Salir")
         print("Seleccione una opcion: ")
 
         when (readlnOrNull()?.trim()) {
@@ -45,7 +46,8 @@ fun main() {
             "3" -> menuClientes(clienteService, comentarioService)
             "4" -> menuIncidencias(incidenciaService)
             "5" -> menuImportarExportar(clienteService, reservaService, incidenciaService, ficheroRepo)
-            "6" -> menu = false
+            "6" -> checkout(clienteService, reservaService, incidenciaService)
+            "7" -> menu = false
             else -> println("Opcion no valida")
         }
     }
@@ -58,9 +60,9 @@ fun menuIncidencias(service: IncidenciaService) {
         println("1. Reportar nueva incidencia")
         println("2. Buscar incidencia por ID")
         println("3. Listar todas las incidencias")
-        println("4. Listar incidencias de una habitacion")
-        println("5. Listar incidencias no resueltas")
-        println("6. Marcar incidencia como resuelta")
+        println("4. Filtrar por habitacion")
+        println("5. Incidencias pendientes")
+        println("6. Resolver incidencia")
         println("7. Eliminar incidencia")
         println("8. Volver al menu principal")
         print("Seleccione una opcion: ")
@@ -266,11 +268,11 @@ fun menuReservas(reservaService: ReservaService, clienteService: ClienteService)
 
     while (running) {
         println("\n--- GESTION DE RESERVAS ---")
-        println("1. Buscar reserva por cliente")
+        println("1. Buscar reservas por cliente")
         println("2. Buscar reservas por fecha")
         println("3. Listar todas las reservas")
-        println("4. Modificar fechas de una reserva")
-        println("5. Marcar reserva como pagada")
+        println("4. Modificar fechas")
+        println("5. Marcar como pagada")
         println("6. Cancelar reserva")
         println("7. Eliminar reserva")
         println("8. Volver al menu principal")
@@ -413,10 +415,10 @@ fun menuClientes(service: ClienteService, comentarioService: ComentarioClienteSe
         println("1. Registrar nuevo cliente")
         println("2. Buscar cliente por NIF")
         println("3. Listar todos los clientes")
-        println("4. Actualizar datos de cliente")
+        println("4. Actualizar datos")
         println("5. Eliminar cliente")
-        println("6. Registrar comentario de cliente")
-        println("7. Listar comentarios de clientes")
+        println("6. Anadir comentario")
+        println("7. Ver comentarios")
         println("8. Volver al menu principal")
         print("Seleccione una opcion: ")
 
@@ -525,11 +527,11 @@ fun menuImportarExportar(
 ) {
     var menu = true
     while (menu) {
-        println("\n--- IMPORTAR / EXPORTAR DATOS ---")
-        println("1. Exportar reservas a JSON")
-        println("2. Importar datos de prueba desde JSON")
-        println("3. Generar informe de reservas (TXT)")
-        println("4. Exportar incidencias a JSON")
+        println("\n--- IMPORTACION / EXPORTACION ---")
+        println("1. Exportar reservas (JSON)")
+        println("2. Importar datos de prueba")
+        println("3. Generar informe de reservas")
+        println("4. Exportar incidencias (JSON)")
         println("5. Volver al menu principal")
         print("Seleccione una opcion: ")
 
@@ -604,5 +606,60 @@ fun menuImportarExportar(
             "5" -> menu = false
             else -> println("Opcion no valida")
         }
+    }
+}
+
+fun checkout(clienteService: ClienteService, reservaService: ReservaService, incidenciaService: IncidenciaService) {
+    try {
+        println("\n--- CHECKOUT ---")
+        val hoy = LocalDate.now()
+        val activas = reservaService.listarReservas().filter {
+            it.estado != Reserva.ESTADO_CANCELADA && it.estado != Reserva.ESTADO_FINALIZADA
+            && !it.fechaEntrada.isAfter(hoy)
+        }
+        if (activas.isEmpty()) {
+            println("No hay reservas activas para hoy")
+            return
+        }
+        println("Reservas activas:")
+        activas.forEach { r ->
+            val nombre = try {
+                clienteService.buscarCliente(r.idCliente).nombre
+            } catch (e: Exception) { r.idCliente }
+            println("  ID: ${r.id} | Cliente: $nombre | Hab: ${r.numeroHabitacion} | Ent: ${r.fechaEntrada} | Sal: ${r.fechaSalida} | Pagada: ${if (r.pagada) "Si" else "No"}")
+        }
+        print("\nID de la reserva a finalizar: ")
+        val id = readlnOrNull()?.trim()?.toIntOrNull()
+            ?: throw IllegalArgumentException("ID no valido")
+        val reserva = reservaService.buscarReserva(id)
+
+        println("\nReserva seleccionada:")
+        mostrarReserva(reserva, clienteService)
+
+        print("\nReportar incidencia durante la estancia? (s/n): ")
+        if (readlnOrNull()?.trim()?.lowercase() == "s") {
+            print("Descripcion de la incidencia: ")
+            val descripcion = readlnOrNull()?.trim() ?: ""
+            val incidencia = incidenciaService.reportarIncidencia(reserva.numeroHabitacion, descripcion)
+            println("Incidencia reportada correctamente. ID: ${incidencia.id}")
+        }
+
+        if (!reserva.pagada) {
+            print("La reserva no esta pagada. Desea pagar ahora? (s/n): ")
+            if (readlnOrNull()?.trim()?.lowercase() == "s") {
+                reservaService.marcarComoPagada(reserva.id)
+                println("Reserva pagada correctamente")
+            }
+        }
+
+        reservaService.finalizarReserva(reserva.id)
+        val nombreCliente = try {
+            clienteService.buscarCliente(reserva.idCliente).nombre
+        } catch (e: Exception) { reserva.idCliente }
+        println("Checkout completado correctamente. ¡Hasta pronto, $nombreCliente!")
+    } catch (e: EntidadNoEncontradaException) {
+        println(e.message)
+    } catch (e: Exception) {
+        println("Error: ${e.message}")
     }
 }
