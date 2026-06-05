@@ -1,0 +1,60 @@
+{
+  "clientes": [
+    {
+      "id": "12345678Z",
+      "nombre": "Juan Perez Lopez",
+      "email": "juan@email.com",
+      "telefono": "612345678"
+    },
+    {
+      "id": "87654321X",
+      "nombre": "Maria Garcia Ruiz",
+      "email": "maria@email.com",
+      "telefono": "698765432"
+    },
+    {
+      "id": "11111111H",
+      "nombre": "Carlos Martinez Sanchez",
+      "email": "carlos@email.com",
+      "telefono": "655443322"
+    },
+    {
+      "id": "22222222J",
+      "nombre": "Ana Fernandez Lopez",
+      "email": "ana@email.com",
+      "telefono": "677889900"
+    }
+  ],
+  "reservas": [
+    {
+      "idCliente": "12345678Z",
+      "numeroHabitacion": 101,
+      "fechaEntrada": "2026-06-05",
+      "fechaSalida": "2026-06-07"
+    },
+    {
+      "idCliente": "87654321X",
+      "numeroHabitacion": 202,
+      "fechaEntrada": "2026-06-05",
+      "fechaSalida": "2026-06-06"
+    },
+    {
+      "idCliente": "11111111H",
+      "numeroHabitacion": 303,
+      "fechaEntrada": "2026-06-05",
+      "fechaSalida": "2026-06-10"
+    },
+    {
+      "idCliente": "22222222J",
+      "numeroHabitacion": 104,
+      "fechaEntrada": "2026-06-06",
+      "fechaSalida": "2026-06-08"
+    },
+    {
+      "idCliente": "12345678Z",
+      "numeroHabitacion": 205,
+      "fechaEntrada": "2026-06-10",
+      "fechaSalida": "2026-06-12"
+    }
+  ]
+}

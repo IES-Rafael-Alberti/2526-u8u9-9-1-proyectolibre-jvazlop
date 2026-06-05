@@ -44,33 +44,6 @@ class FicheroRepository {
         }
     }
 
-    fun exportarReservasAJson(reservas: List<Reserva>, ruta: String) {
-        try {
-            val json = gson.toJson(reservas)
-            File(ruta).writeText(json)
-        } catch (e: Exception) {
-            throw FicheroException("Error al exportar reservas a $ruta", e)
-        }
-    }
-
-    fun exportarIncidenciasAJson(incidencias: List<Incidencia>, ruta: String) {
-        try {
-            val json = gson.toJson(incidencias)
-            File(ruta).writeText(json)
-        } catch (e: Exception) {
-            throw FicheroException("Error al exportar incidencias a $ruta", e)
-        }
-    }
-
-    fun importarDatosPrueba(ruta: String): DatosImportacion {
-        try {
-            val json = File(ruta).readText()
-            return gson.fromJson(json, DatosImportacion::class.java)
-        } catch (e: Exception) {
-            throw FicheroException("Error al importar datos de prueba de $ruta", e)
-        }
-    }
-
     fun generarInformeReservas(reservas: List<Reserva>, ruta: String) {
         try {
             val lineas = mutableListOf("INFORME DE RESERVAS - HOTEL MALIGNO")
@@ -85,6 +58,33 @@ class FicheroRepository {
             File(ruta).writeText(lineas.joinToString("\n"))
         } catch (e: Exception) {
             throw FicheroException("Error al generar informe en $ruta", e)
+        }
+    }
+
+    fun importarDatosPrueba(ruta: String): DatosImportacion {
+        try {
+            val json = File(ruta).readText()
+            return gson.fromJson(json, DatosImportacion::class.java)
+        } catch (e: Exception) {
+            throw FicheroException("Error al importar datos de prueba de $ruta", e)
+        }
+    }
+
+    fun exportarIncidenciasATxt(incidencias: List<Incidencia>, ruta: String) {
+        try {
+            val lineas = mutableListOf("INFORME DE INCIDENCIAS - HOTEL MALIGNO")
+            lineas.add("=" .repeat(50))
+            lineas.add("Total de incidencias: ${incidencias.size}")
+            lineas.add("")
+            for (i in incidencias) {
+                lineas.add("Habitacion: ${i.numeroHabitacion} | Resuelta: ${if (i.resuelta) "Si" else "No"}")
+                lineas.add("  Descripcion: ${i.descripcion}")
+                lineas.add("  Fecha: ${i.fecha}")
+                lineas.add("")
+            }
+            File(ruta).writeText(lineas.joinToString("\n"))
+        } catch (e: Exception) {
+            throw FicheroException("Error al exportar incidencias a $ruta", e)
         }
     }
 }

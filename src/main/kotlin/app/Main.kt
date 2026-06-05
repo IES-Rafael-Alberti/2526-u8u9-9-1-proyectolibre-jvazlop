@@ -528,24 +528,14 @@ fun menuImportarExportar(
     var menu = true
     while (menu) {
         println("\n--- IMPORTACION / EXPORTACION ---")
-        println("1. Exportar reservas (JSON)")
-        println("2. Importar datos de prueba")
-        println("3. Generar informe de reservas")
-        println("4. Exportar incidencias (JSON)")
-        println("5. Volver al menu principal")
+        println("1. Importar reservas (JSON)")
+        println("2. Exportar reservas (TXT)")
+        println("3. Exportar incidencias (TXT)")
+        println("4. Volver al menu principal")
         print("Seleccione una opcion: ")
 
         when (readlnOrNull()?.trim()) {
             "1" -> {
-                try {
-                    val reservas = reservaService.listarReservas()
-                    ficheroRepo.exportarReservasAJson(reservas, "./reservas.json")
-                    println("Reservas exportadas a ./reservas.json")
-                } catch (e: Exception) {
-                    println("Error: ${e.message}")
-                }
-            }
-            "2" -> {
                 try {
                     print("Nombre del fichero (ej: datos_prueba.json): ")
                     val nombreFic = readlnOrNull()?.trim() ?: ""
@@ -585,25 +575,25 @@ fun menuImportarExportar(
                     println("Error al importar: ${e.message}")
                 }
             }
-            "3" -> {
+            "2" -> {
                 try {
                     val reservas = reservaService.listarReservas()
-                    ficheroRepo.generarInformeReservas(reservas, "./informe_reservas.txt")
-                    println("Informe generado en ./informe_reservas.txt")
+                    ficheroRepo.generarInformeReservas(reservas, "./reservas.txt")
+                    println("Informe de reservas generado en ./reservas.txt")
                 } catch (e: Exception) {
                     println("Error: ${e.message}")
                 }
             }
-            "4" -> {
+            "3" -> {
                 try {
                     val incidencias = incidenciaService.listarIncidencias()
-                    ficheroRepo.exportarIncidenciasAJson(incidencias, "./incidencias.json")
-                    println("Incidencias exportadas a ./incidencias.json")
+                    ficheroRepo.exportarIncidenciasATxt(incidencias, "./incidencias.txt")
+                    println("Informe de incidencias generado en ./incidencias.txt")
                 } catch (e: Exception) {
                     println("Error: ${e.message}")
                 }
             }
-            "5" -> menu = false
+            "4" -> menu = false
             else -> println("Opcion no valida")
         }
     }
