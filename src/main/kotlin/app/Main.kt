@@ -9,6 +9,7 @@ import org.iesra.service.IncidenciaService
 import org.iesra.service.ReservaService
 import org.iesra.repository.FicheroRepository
 import org.iesra.util.ConexionH2
+import org.iesra.validator.Validador
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
@@ -195,6 +196,7 @@ fun nuevaReserva(clienteService: ClienteService, reservaService: ReservaService)
     try {
         print("NIF: ")
         val nif = readlnOrNull()?.trim() ?: ""
+        Validador.comprobarNif(nif)
         var cliente: Cliente
 
         val existente = clienteService.existeCliente(nif)

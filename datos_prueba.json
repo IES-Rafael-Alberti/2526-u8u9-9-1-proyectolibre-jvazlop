@@ -23,6 +23,42 @@
       "nombre": "Ana Fernandez Lopez",
       "email": "ana@email.com",
       "telefono": "677889900"
+    },
+    {
+      "id": "33333333P",
+      "nombre": "Laura Moreno Diaz",
+      "email": "laura@email.com",
+      "telefono": "634567890"
+    },
+    {
+      "id": "44444444A",
+      "nombre": "Pedro Sanchez Gil",
+      "email": "pedro@email.com",
+      "telefono": "622334455"
+    },
+    {
+      "id": "55555555K",
+      "nombre": "Sofia Ramirez Vega",
+      "email": "sofia@email.com",
+      "telefono": "688776655"
+    },
+    {
+      "id": "66666666Q",
+      "nombre": "David Torres Gomez",
+      "email": "david@email.com",
+      "telefono": "611223344"
+    },
+    {
+      "id": "77777777B",
+      "nombre": "Elena Navarro Cruz",
+      "email": "elena@email.com",
+      "telefono": "699887766"
+    },
+    {
+      "id": "88888888Y",
+      "nombre": "Javier Molina Rojas",
+      "email": "javier@email.com",
+      "telefono": "644556677"
     }
   ],
   "reservas": [
@@ -55,6 +91,42 @@
       "numeroHabitacion": 205,
       "fechaEntrada": "2026-06-10",
       "fechaSalida": "2026-06-12"
+    },
+    {
+      "idCliente": "33333333P",
+      "numeroHabitacion": 301,
+      "fechaEntrada": "2026-06-05",
+      "fechaSalida": "2026-06-09"
+    },
+    {
+      "idCliente": "44444444A",
+      "numeroHabitacion": 102,
+      "fechaEntrada": "2026-06-05",
+      "fechaSalida": "2026-06-06"
+    },
+    {
+      "idCliente": "55555555K",
+      "numeroHabitacion": 203,
+      "fechaEntrada": "2026-06-06",
+      "fechaSalida": "2026-06-08"
+    },
+    {
+      "idCliente": "66666666Q",
+      "numeroHabitacion": 304,
+      "fechaEntrada": "2026-06-07",
+      "fechaSalida": "2026-06-10"
+    },
+    {
+      "idCliente": "77777777B",
+      "numeroHabitacion": 105,
+      "fechaEntrada": "2026-06-08",
+      "fechaSalida": "2026-06-11"
+    },
+    {
+      "idCliente": "88888888Y",
+      "numeroHabitacion": 206,
+      "fechaEntrada": "2026-06-05",
+      "fechaSalida": "2026-06-09"
     }
   ]
 }

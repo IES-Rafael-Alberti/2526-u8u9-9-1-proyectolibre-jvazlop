@@ -1,0 +1,7 @@
+INFORME DE INCIDENCIAS - HOTEL MALIGNO
+==================================================
+Total de incidencias: 1
+
+Habitacion: 10 | Resuelta: Si
+  Descripcion: SDFS
+  Fecha: 2026-06-05T13:43:12.708429800
