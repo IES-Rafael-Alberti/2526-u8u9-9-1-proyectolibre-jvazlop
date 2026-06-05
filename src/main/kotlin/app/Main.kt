@@ -4,6 +4,7 @@ import org.iesra.exception.EntidadNoEncontradaException
 import org.iesra.model.Cliente
 import org.iesra.model.Reserva
 import org.iesra.service.ClienteService
+import org.iesra.service.ComentarioClienteService
 import org.iesra.service.ReservaService
 import org.iesra.util.ConexionH2
 import java.time.LocalDate
@@ -13,6 +14,7 @@ import java.time.format.DateTimeParseException
 fun main() {
     val clienteService = ClienteService()
     val reservaService = ReservaService()
+    val comentarioService = ComentarioClienteService()
 
     try {
         ConexionH2.inicializarTablas()
@@ -22,18 +24,20 @@ fun main() {
         return
     }
 
-    var running = true
-    while (running) {
+    var menu = true
+    while (menu) {
         println("\n===== HOTEL MALIGNO - SISTEMA DE RESERVAS =====")
         println("1. Nueva reserva (check-in)")
         println("2. Gestionar reservas")
-        println("3. Salir")
+        println("3. Gestionar clientes")
+        println("4. Salir")
         print("Seleccione una opcion: ")
 
         when (readlnOrNull()?.trim()) {
             "1" -> nuevaReserva(clienteService, reservaService)
             "2" -> menuReservas(reservaService, clienteService)
-            "3" -> running = false
+            "3" -> menuClientes(clienteService, comentarioService)
+            "4" -> menu = false
             else -> println("Opcion no valida")
         }
     }
@@ -261,4 +265,115 @@ fun mostrarReserva(reserva: Reserva, clienteService: ClienteService) {
     println("ID: ${reserva.id} | Cliente: $nombreCliente (${reserva.idCliente})")
     println("  Hab: ${reserva.numeroHabitacion} | $huespedes | Entrada: ${reserva.fechaEntrada} | Salida: ${reserva.fechaSalida}")
     println("  Estado: ${reserva.estado} | Pagada: ${if (reserva.pagada) "Si" else "No"}")
+}
+
+fun menuClientes(service: ClienteService, comentarioService: ComentarioClienteService) {
+    var running = true
+    while (running) {
+        println("\n--- GESTION DE CLIENTES ---")
+        println("1. Registrar nuevo cliente")
+        println("2. Buscar cliente por NIF")
+        println("3. Listar todos los clientes")
+        println("4. Actualizar datos de cliente")
+        println("5. Eliminar cliente")
+        println("6. Registrar comentario de cliente")
+        println("7. Listar comentarios de clientes")
+        println("8. Volver al menu principal")
+        print("Seleccione una opcion: ")
+
+        when (readlnOrNull()?.trim()) {
+            "1" -> {
+                try {
+                    print("NIF: ")
+                    val nif = readlnOrNull()?.trim() ?: ""
+                    print("Nombre: ")
+                    val nombre = readlnOrNull()?.trim() ?: ""
+                    print("Email: ")
+                    val email = readlnOrNull()?.trim() ?: ""
+                    print("Telefono: ")
+                    val telefono = readlnOrNull()?.trim() ?: ""
+
+                    val cliente = service.registrarCliente(nif, nombre, email, telefono)
+                    println("Cliente registrado correctamente: ${cliente.nombre}")
+                } catch (e: Exception) {
+                    println("Error: ${e.message}")
+                }
+            }
+            "2" -> {
+                try {
+                    print("NIF del cliente: ")
+                    val nif = readlnOrNull()?.trim() ?: ""
+                    val cliente = service.buscarCliente(nif)
+                    println("NIF: ${cliente.id}")
+                    println("Nombre: ${cliente.nombre}")
+                    println("Email: ${cliente.email}")
+                    println("Telefono: ${cliente.telefono}")
+                } catch (e: EntidadNoEncontradaException) {
+                    println(e.message)
+                }
+            }
+            "3" -> {
+                val clientes = service.listarClientes()
+                if (clientes.isEmpty()) {
+                    println("No hay clientes registrados")
+                } else {
+                    println("Lista de clientes:")
+                    clientes.forEach { c ->
+                        println("  ${c.id} - ${c.nombre} (${c.email})")
+                    }
+                }
+            }
+            "4" -> {
+                try {
+                    print("NIF del cliente a actualizar: ")
+                    val nif = readlnOrNull()?.trim() ?: ""
+                    print("Nuevo nombre: ")
+                    val nombre = readlnOrNull()?.trim() ?: ""
+                    print("Nuevo email: ")
+                    val email = readlnOrNull()?.trim() ?: ""
+                    print("Nuevo telefono: ")
+                    val telefono = readlnOrNull()?.trim() ?: ""
+
+                    service.actualizarCliente(nif, nombre, email, telefono)
+                    println("Cliente actualizado correctamente")
+                } catch (e: Exception) {
+                    println("Error: ${e.message}")
+                }
+            }
+            "5" -> {
+                try {
+                    print("NIF del cliente a eliminar: ")
+                    val nif = readlnOrNull()?.trim() ?: ""
+                    if (service.eliminarCliente(nif)) {
+                        println("Cliente eliminado correctamente")
+                    }
+                } catch (e: EntidadNoEncontradaException) {
+                    println(e.message)
+                }
+            }
+            "6" -> {
+                try {
+                    print("Comentario del cliente: ")
+                    val nombre = readlnOrNull()?.trim() ?: ""
+                    val comentario = comentarioService.registrarComentario(nombre)
+                    println("Comentario registrado correctamente. ID: ${comentario.id}")
+                } catch (e: Exception) {
+                    println("Error: ${e.message}")
+                }
+            }
+            "7" -> {
+                val visitas = comentarioService.listarComentarios()
+                if (visitas.isEmpty()) {
+                    println("No hay visitas registradas")
+                } else {
+                    println("Comentarios de clientes:")
+                    visitas.forEach { v ->
+                        println("  ${v.id} | ${v.nombreCliente} | ${v.fecha}")
+                    }
+                }
+            }
+            "8" -> running = false
+            else -> println("Opcion no valida")
+        }
+    }
 }

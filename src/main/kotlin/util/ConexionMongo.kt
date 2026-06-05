@@ -9,7 +9,7 @@ import org.iesra.exception.MongoDBException
 
 object ConexionMongo {
 
-    private const val CADENA_CONEXION = "mongodb+srv://<usuario>:<contrasena>@cluster0.xxxxx.mongodb.net/?retryWrites=true&w=majority"
+    private const val CADENA_CONEXION = "mongodb+srv://jordi:gILIPOLLAS26@hotelmaligno.ukdr4dk.mongodb.net/?appName=hotelmaligno"
     private const val NOMBRE_BD = "hotel_maligno"
     private const val NOMBRE_COLECCION = "incidencias"
 
