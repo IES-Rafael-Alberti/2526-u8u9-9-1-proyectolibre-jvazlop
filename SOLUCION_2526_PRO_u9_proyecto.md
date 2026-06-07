@@ -146,7 +146,6 @@
 
 | Problema | Solucion aplicada | Enlace o evidencia |
 |----------|-------------------|--------------------|
-| Gson no sabe serializar LocalDateTime | Cambiar exportacion a TXT en vez de JSON | `repository/FicheroRepository.kt` |
 | MongoDB no se conectaba por la URI | Revisar la cadena de conexion en ConexionMongo | `util/ConexionMongo.kt` |
 | Las reservas no se podian crear con fecha pasada | Validacion en ReservaService (fecha>=hoy) | `service/ReservaService.kt` |
 
