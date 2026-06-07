@@ -312,7 +312,8 @@ https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/9
 https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/974d4e0049f186a4334dcb45d576aca4bc565dd9/src/main/kotlin/service/ClienteService.kt#L9
 ### 9.17. Documentacion
 
-Este archivo `SOLUCION_2526_PRO_u9_proyecto.md` contiene toda la documentacion.
+Todo el codigo esta documentado con KDoc, ej:
+https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/54a126ba9382f33e6cf3c2b1d342543d21980e4a/src/main/kotlin/model/Habitacion.kt#L3-L11
 
 ### 9.18. Control de versiones
 
