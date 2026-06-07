@@ -1,7 +1,6 @@
 package org.iesra.repository
 
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import org.iesra.exception.FicheroException
 import org.iesra.model.Cliente
 import org.iesra.model.Incidencia
@@ -31,16 +30,6 @@ class FicheroRepository {
             File(ruta).writeText(json)
         } catch (e: Exception) {
             throw FicheroException("Error al exportar clientes a $ruta", e)
-        }
-    }
-
-    fun importarClientesDeJson(ruta: String): List<Cliente> {
-        try {
-            val json = File(ruta).readText()
-            val tipo = object : TypeToken<List<Cliente>>() {}.type
-            return gson.fromJson(json, tipo)
-        } catch (e: Exception) {
-            throw FicheroException("Error al importar clientes de $ruta", e)
         }
     }
 

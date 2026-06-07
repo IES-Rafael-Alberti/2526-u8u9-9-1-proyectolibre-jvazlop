@@ -533,7 +533,8 @@ fun menuImportarExportar(
         println("1. Importar reservas (JSON)")
         println("2. Exportar reservas (TXT)")
         println("3. Exportar incidencias (TXT)")
-        println("4. Volver al menu principal")
+        println("4. Exportar clientes (JSON)")
+        println("5. Volver al menu principal")
         print("Seleccione una opcion: ")
 
         when (readlnOrNull()?.trim()) {
@@ -595,7 +596,16 @@ fun menuImportarExportar(
                     println("Error: ${e.message}")
                 }
             }
-            "4" -> menu = false
+            "4" -> {
+                try {
+                    val clientes = clienteService.listarClientes()
+                    ficheroRepo.exportarClientesAJson(clientes, "./clientes.json")
+                    println("Clientes exportados a ./clientes.json")
+                } catch (e: Exception) {
+                    println("Error: ${e.message}")
+                }
+            }
+            "5" -> menu = false
             else -> println("Opcion no valida")
         }
     }
