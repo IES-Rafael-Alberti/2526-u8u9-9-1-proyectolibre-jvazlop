@@ -217,14 +217,19 @@ Si falla se lanza `FicheroException`. Los errores se capturan en `app/Menu.kt`.
 ### 9.9. MongoDB
 
 Base de datos `hotel_maligno` en MongoDB Atlas. Colecciones:
-- `incidencias` - gestionada por `IncidenciaRepository` (`repository/IncidenciaRepository.kt`)
+- `incidencias` - gestionada por `IncidenciaRepository`
+https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/943ddf447dbb9bc99c15f9b86bfed676d9f74ddc/src/main/kotlin/repository/IncidenciaRepository.kt#L12-L106
+  
 - `comentarios_clientes` - gestionada por `ComentarioClienteRepository` (`repository/ComentarioClienteRepository.kt`)
+  https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/943ddf447dbb9bc99c15f9b86bfed676d9f74ddc/src/main/kotlin/repository/ComentarioClienteRepository.kt#L12-L65
 Operaciones: insertar, buscar por id/ObjectId, listar, filtrar, actualizar (resuelta), eliminar. Las consultas usan `Filters.eq()`, `Filters.and()` de la API de MongoDB.
 
 ### 9.10. Base de datos relacional
 
-SGBD: H2 embebido en `data/gestorhotel.mv.db`. Tablas: `clientes`, `habitaciones`, `reservas` con FK de `reservas.id_cliente` -> `clientes.id` y `reservas.numero_habitacion` -> `habitaciones.numero`. Las tablas se crean en `util/ConexionH2.kt:23` con CREATE TABLE IF NOT EXISTS. CRUD en `ClienteDao`, `ReservaDao`, `HabitacionDao`. Consultas parametrizadas con `PreparedStatement` (ej: `repository/ClienteDao.kt`). Conexion con `DriverManager` en `util/ConexionH2.kt`.
-
+SGBD: H2 embebido en `data/gestorhotel.mv.db`. Tablas: `clientes`, `habitaciones`, `reservas` con FK de `reservas.id_cliente` -> `clientes.id` y `reservas.numero_habitacion` -> `habitaciones.numero`. Las tablas se crean con CREATE TABLE IF NOT EXISTS. CRUD en `ClienteDao`, `ReservaDao`, `HabitacionDao`. Consultas parametrizadas con `PreparedStatement`. Conexion con `DriverManager.
+https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/943ddf447dbb9bc99c15f9b86bfed676d9f74ddc/src/main/kotlin/util/ConexionH2.kt#L8-L79
+https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/943ddf447dbb9bc99c15f9b86bfed676d9f74ddc/src/main/kotlin/repository/ClienteDao.kt#L11-L22
+https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/943ddf447dbb9bc99c15f9b86bfed676d9f74ddc/src/main/kotlin/repository/ClienteDao.kt#L64-L75
 ### 9.11. Excepciones
 
 Excepciones propias en `exception/Excepciones.kt:`:
@@ -234,15 +239,27 @@ Excepciones propias en `exception/Excepciones.kt:`:
 - `FicheroException` - error al leer/escribir ficheros
 - `MongoDBException` - error al operar con MongoDB
 
+https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/943ddf447dbb9bc99c15f9b86bfed676d9f74ddc/src/main/kotlin/exception/Excepciones.kt#L3-L11
+
 Se capturan en los menus con try-catch mostrando mensajes al usuario. Ej: `app/Menu.kt` captura `EntidadNoEncontradaException` en checkout.
+https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/943ddf447dbb9bc99c15f9b86bfed676d9f74ddc/src/main/kotlin/app/Menu.kt#L614-L665
 
 ### 9.12. SOLID y buenas practicas
 
 - **SRP:** Cada clase tiene una unica responsabilidad. `ClienteDao` solo accede a la tabla de clientes, `Validador` solo valida datos, `ClienteService` solo contiene logica de negocio de clientes, `ConexionH2` solo gestiona la conexion a H2. Ninguna clase mezcla responsabilidades.
+  https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/943ddf447dbb9bc99c15f9b86bfed676d9f74ddc/src/main/kotlin/repository/ClienteDao.kt#L9
+  
 - **OCP:** La interfaz `Repositorio<T, ID>` permite extender el sistema anadiendo nuevos DAOs o repositorios sin modificar el codigo existente. Por ejemplo, se anadio `ComentarioClienteRepository` implementando la misma interfaz sin tocar `Repositorio`.
+  https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/943ddf447dbb9bc99c15f9b86bfed676d9f74ddc/src/main/kotlin/repository/Repositorio.kt#L3
+  
 - **LSP:** Todas las implementaciones de `Repositorio<T, ID>` (`ClienteDao`, `ReservaDao`, `IncidenciaRepository`) son intercambiables. Los servicios funcionan con cualquiera porque dependen de la abstraccion, no de la implementacion concreta.
+  https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/943ddf447dbb9bc99c15f9b86bfed676d9f74ddc/src/main/kotlin/repository/ReservaDao.kt#L11
+  
 - **ISP:** Las funciones del menu estan separadas para que cada una solo reciba los servicios que necesita. `nuevaReserva(clienteService, reservaService)` no recibe `IncidenciaService`. `menuIncidencias(incidenciaService)` no recibe servicios de clientes. Ninguna funcion depende de metodos que no usa.
+  https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/943ddf447dbb9bc99c15f9b86bfed676d9f74ddc/src/main/kotlin/app/Menu.kt#L190
+  
 - **DIP:** Los servicios reciben `Repositorio<T, ID>` en su constructor como parametro, no instancian directamente clases concretas. Esto permite cambiar la implementacion (H2, MongoDB, ficheros) sin modificar el servicio.
+https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/943ddf447dbb9bc99c15f9b86bfed676d9f74ddc/src/main/kotlin/service/ClienteService.kt#L9
 
 ### 9.13. Librerias externas
 
@@ -252,6 +269,8 @@ En `build.gradle.kts`:
 - **com.google.code.gson:gson:2.10.1** - Serializacion JSON para ficheros
 - **org.slf4j:slf4j-simple:2.0.9** - Logs de las librerias (MongoDB, H2)
 - **io.kotest:kotest-runner-junit5:5.8.0** - Framework de testing
+
+  https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/943ddf447dbb9bc99c15f9b86bfed676d9f74ddc/build.gradle.kts#L12-L18
 
 ### 9.14. Pruebas y evidencias
 
@@ -264,12 +283,21 @@ Pruebas manuales ejecutando la aplicacion y probando cada opcion del menu. Los d
 ### 9.15. Refactorizacion y codigo limpio
 
 Los menus se extrajeron a funciones separadas: `nuevaReserva`, `menuReservas`, `menuClientes`, `menuIncidencias`, `menuImportarExportar`, `checkout` en `app/Menu.kt`. Esto evita un main de 500+ lineas. Nombres de variables descriptivos, estructura de paquetes clara, sin codigo repetido.
+https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/943ddf447dbb9bc99c15f9b86bfed676d9f74ddc/src/main/kotlin/Main.kt#L3-L5
+
+Todo lo que tiene que ver con menus se guarda en app/menu.kt.Ejemplo codigo
+
+https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/943ddf447dbb9bc99c15f9b86bfed676d9f74ddc/src/main/kotlin/app/Menu.kt#L17-L43
 
 ### 9.16. Patrones de diseno
 
 - **DAO:** `ClienteDao`, `ReservaDao`, `HabitacionDao` encapsulan el acceso a H2 con SQL
+  https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/943ddf447dbb9bc99c15f9b86bfed676d9f74ddc/src/main/kotlin/repository/ClienteDao.kt#L9
 - **Repository:** `IncidenciaRepository` y `ComentarioClienteRepository` encapsulan el acceso a MongoDB
+  https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/943ddf447dbb9bc99c15f9b86bfed676d9f74ddc/src/main/kotlin/repository/IncidenciaRepository.kt#L12
+  
 - **Singleton:** `ConexionH2` y `ConexionMongo` como `object` de Kotlin
+  https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/943ddf447dbb9bc99c15f9b86bfed676d9f74ddc/src/main/kotlin/util/ConexionH2.kt#L8
 - **Dependency Injection:** Los servicios reciben sus dependencias por constructor (ej: `service/ClienteService.kt`)
 
 ### 9.17. Documentacion
