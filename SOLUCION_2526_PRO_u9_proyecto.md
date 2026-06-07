@@ -149,6 +149,8 @@
 | MongoDB no se conectaba por la URI | Revisar la cadena de conexion en ConexionMongo | `util/ConexionMongo.kt` |
 | Las reservas no se podian crear con fecha pasada | Validacion en ReservaService (fecha>=hoy) | `service/ReservaService.kt` |
 
+https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/b24dbeac6018b6a58ba19a9c83e1abd72909de42/src/main/kotlin/util/ConexionMongo.kt#L16
+https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/b24dbeac6018b6a58ba19a9c83e1abd72909de42/src/main/kotlin/service/ReservaService.kt#L30-L34
 ## 9. Respuestas a los criterios de evaluacion
 
 ### 9.1. Diseno general
