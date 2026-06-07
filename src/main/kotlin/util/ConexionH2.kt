@@ -14,7 +14,7 @@ object ConexionH2 {
     private var conexion: Connection? = null
 
     fun obtenerConexion(): Connection {
-        if (conexion == null || conexion!!.isClosed) {
+        if (conexion == null || conexion?.isClosed == true) {
             try {
                 Class.forName("org.h2.Driver")
                 conexion = DriverManager.getConnection(URL, USUARIO, CONTRASENA)
@@ -22,7 +22,7 @@ object ConexionH2 {
                 throw ConexionBaseDatosException("Error al conectar con H2", e)
             }
         }
-        return conexion!!
+        return conexion ?: throw ConexionBaseDatosException("La conexion H2 no se pudo establecer")
     }
 
     fun cerrarConexion() {

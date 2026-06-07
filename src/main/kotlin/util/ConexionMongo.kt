@@ -20,9 +20,10 @@ object ConexionMongo {
         try {
             if (cliente == null) {
                 cliente = MongoClients.create(CADENA_CONEXION)
-                baseDatos = cliente!!.getDatabase(NOMBRE_BD)
+                baseDatos = cliente?.getDatabase(NOMBRE_BD)
             }
-            return baseDatos!!.getCollection(nombreColeccion)
+            return baseDatos?.getCollection(nombreColeccion)
+                ?: throw MongoDBException("La base de datos MongoDB no se pudo obtener")
         } catch (e: Exception) {
             throw MongoDBException("Error al conectar con MongoDB Atlas", e)
         }
