@@ -46,7 +46,7 @@ class FicheroRepository {
 
     fun generarInformeReservas(reservas: List<Reserva>, ruta: String) {
         try {
-            val lineas = mutableListOf("INFORME DE RESERVAS - HOTEL MALIGNO")
+            val lineas = mutableListOf("INFORME DE RESERVAS - GESTOR HOTEL")
             lineas.add("=" .repeat(50))
             lineas.add("Total de reservas: ${reservas.size}")
             lineas.add("")
@@ -72,7 +72,7 @@ class FicheroRepository {
 
     fun exportarIncidenciasATxt(incidencias: List<Incidencia>, ruta: String) {
         try {
-            val lineas = mutableListOf("INFORME DE INCIDENCIAS - HOTEL MALIGNO")
+            val lineas = mutableListOf("INFORME DE INCIDENCIAS - GESTOR HOTEL")
             lineas.add("=" .repeat(50))
             lineas.add("Total de incidencias: ${incidencias.size}")
             lineas.add("")

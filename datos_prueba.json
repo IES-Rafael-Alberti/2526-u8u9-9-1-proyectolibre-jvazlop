@@ -65,26 +65,26 @@
     {
       "idCliente": "12345678Z",
       "numeroHabitacion": 101,
-      "fechaEntrada": "2026-06-05",
-      "fechaSalida": "2026-06-07"
+      "fechaEntrada": "2026-06-07",
+      "fechaSalida": "2026-06-09"
     },
     {
       "idCliente": "87654321X",
       "numeroHabitacion": 202,
-      "fechaEntrada": "2026-06-05",
-      "fechaSalida": "2026-06-06"
+      "fechaEntrada": "2026-06-07",
+      "fechaSalida": "2026-06-08"
     },
     {
       "idCliente": "11111111H",
       "numeroHabitacion": 303,
-      "fechaEntrada": "2026-06-05",
-      "fechaSalida": "2026-06-10"
+      "fechaEntrada": "2026-06-07",
+      "fechaSalida": "2026-06-12"
     },
     {
       "idCliente": "22222222J",
       "numeroHabitacion": 104,
-      "fechaEntrada": "2026-06-06",
-      "fechaSalida": "2026-06-08"
+      "fechaEntrada": "2026-06-08",
+      "fechaSalida": "2026-06-10"
     },
     {
       "idCliente": "12345678Z",
@@ -95,20 +95,20 @@
     {
       "idCliente": "33333333P",
       "numeroHabitacion": 301,
-      "fechaEntrada": "2026-06-05",
-      "fechaSalida": "2026-06-09"
+      "fechaEntrada": "2026-06-07",
+      "fechaSalida": "2026-06-11"
     },
     {
       "idCliente": "44444444A",
       "numeroHabitacion": 102,
-      "fechaEntrada": "2026-06-05",
-      "fechaSalida": "2026-06-06"
+      "fechaEntrada": "2026-06-07",
+      "fechaSalida": "2026-06-08"
     },
     {
       "idCliente": "55555555K",
       "numeroHabitacion": 203,
-      "fechaEntrada": "2026-06-06",
-      "fechaSalida": "2026-06-08"
+      "fechaEntrada": "2026-06-08",
+      "fechaSalida": "2026-06-10"
     },
     {
       "idCliente": "66666666Q",
@@ -125,8 +125,8 @@
     {
       "idCliente": "88888888Y",
       "numeroHabitacion": 206,
-      "fechaEntrada": "2026-06-05",
-      "fechaSalida": "2026-06-09"
+      "fechaEntrada": "2026-06-07",
+      "fechaSalida": "2026-06-11"
     }
   ]
 }

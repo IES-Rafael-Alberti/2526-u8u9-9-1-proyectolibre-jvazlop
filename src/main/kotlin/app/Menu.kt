@@ -31,7 +31,7 @@ fun main() {
 
     var menu = true
     while (menu) {
-        println("\n===== HOTEL MALIGNO - SISTEMA DE RESERVAS =====")
+        println("\n===== GESTOR HOTEL - SISTEMA DE RESERVAS =====")
         println("1. Nuevo check-in")
         println("2. Gestion de reservas")
         println("3. Gestion de clientes")
@@ -266,9 +266,9 @@ fun nuevaReserva(clienteService: ClienteService, reservaService: ReservaService)
 
 fun menuReservas(reservaService: ReservaService, clienteService: ClienteService) {
     val formatoFecha = DateTimeFormatter.ofPattern("dd/MM/yyyy")
-    var running = true
+    var menu = true
 
-    while (running) {
+    while (menu) {
         println("\n--- GESTION DE RESERVAS ---")
         println("1. Buscar reservas por cliente")
         println("2. Buscar reservas por fecha")
@@ -327,7 +327,7 @@ fun menuReservas(reservaService: ReservaService, clienteService: ClienteService)
             "5" -> pagarReserva(reservaService, clienteService)
             "6" -> cancelarReserva(reservaService, clienteService)
             "7" -> eliminarReserva(reservaService, clienteService)
-            "8" -> running = false
+            "8" -> menu = false
             else -> println("Opcion no valida")
         }
     }
@@ -411,8 +411,8 @@ fun mostrarReserva(reserva: Reserva, clienteService: ClienteService) {
 }
 
 fun menuClientes(service: ClienteService, comentarioService: ComentarioClienteService) {
-    var running = true
-    while (running) {
+    var menu = true
+    while (menu) {
         println("\n--- GESTION DE CLIENTES ---")
         println("1. Registrar nuevo cliente")
         println("2. Buscar cliente por NIF")
@@ -515,7 +515,7 @@ fun menuClientes(service: ClienteService, comentarioService: ComentarioClienteSe
                     }
                 }
             }
-            "8" -> running = false
+            "8" -> menu = false
             else -> println("Opcion no valida")
         }
     }

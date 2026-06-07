@@ -1,4 +1,4 @@
-INFORME DE RESERVAS - HOTEL MALIGNO
+INFORME DE RESERVAS - GESTOR HOTEL
 ==================================================
 Total de reservas: 5
 

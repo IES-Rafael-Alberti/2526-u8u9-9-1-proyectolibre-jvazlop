@@ -19,6 +19,17 @@ class ReservaService(
             throw ValidacionException("La fecha de salida debe ser posterior a la de entrada")
         }
 
+        val ocupadas = repositorio.buscarTodos().any {
+            it.numeroHabitacion == numeroHabitacion
+            && it.estado != Reserva.ESTADO_CANCELADA
+            && it.estado != Reserva.ESTADO_FINALIZADA
+            && it.fechaEntrada < fechaSalida
+            && it.fechaSalida > fechaEntrada
+        }
+        if (ocupadas) {
+            throw ValidacionException("La habitacion $numeroHabitacion ya esta ocupada en esas fechas")
+        }
+
         val reserva = Reserva(
             idCliente = idCliente,
             numeroHabitacion = numeroHabitacion,
@@ -61,6 +72,18 @@ class ReservaService(
         }
         if (nuevaSalida.isBefore(nuevaEntrada) || nuevaSalida.isEqual(nuevaEntrada)) {
             throw ValidacionException("La nueva fecha de salida debe ser posterior a la de entrada")
+        }
+
+        val ocupadas = repositorio.buscarTodos().any {
+            it.id != id
+            && it.numeroHabitacion == reserva.numeroHabitacion
+            && it.estado != Reserva.ESTADO_CANCELADA
+            && it.estado != Reserva.ESTADO_FINALIZADA
+            && it.fechaEntrada < nuevaSalida
+            && it.fechaSalida > nuevaEntrada
+        }
+        if (ocupadas) {
+            throw ValidacionException("La habitacion ${reserva.numeroHabitacion} ya esta ocupada en esas fechas")
         }
 
         val actualizada = reserva.copy(fechaEntrada = nuevaEntrada, fechaSalida = nuevaSalida)

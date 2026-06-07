@@ -1,201 +1,290 @@
-# Solución del proyecto
+# Solucion del proyecto
 
-- **Proyecto:** <!-- Nombre del proyecto -->
-- **Alumno/a:** <!-- Nombre y apellidos -->
+- **Proyecto:** GESTOR HOTEL - Sistema de Gestion de Reservas
+- **Alumno/a:** Jordi Antonio Vázquez López
 - **Repositorio:** <!-- URL del repositorio -->
 
 ## 1. Resumen del proyecto
 
-- **Problema que resuelve:** <!-- Explicación breve -->
-- **Usuarios principales:** <!-- A quién va dirigido -->
-- **Funcionalidades principales:** <!-- Lista breve -->
-- **Entidades principales:** <!-- Clases o conceptos del dominio -->
-- **Estructura del proyecto:** <!-- Paquetes principales y responsabilidad -->
+- **Problema que resuelve:** Gestionar las reservas de un hotel, registrar clientes, controlar las habitaciones, reportar incidencias que pasan durante la estancia y guardar comentarios.
+- **Usuarios principales:** Recepcionistas y personal del hotel que tienen que llevar el control de las reservas y las incidencias.
+- **Funcionalidades principales:**
+  - CRUD de clientes con validacion de NIF, email y telefono
+  - CRUD de reservas con control de estados (pendiente, confirmada, cancelada, finalizada)
+  - CRUD de incidencias guardadas en MongoDB Atlas
+  - Check-out con opcion de reportar incidencia y pagar
+  - Importacion de datos desde JSON y exportacion a TXT
+  - Comentarios de clientes en MongoDB
+- **Entidades principales:**
+  - `Cliente` - datos personales del cliente (NIF, nombre, email, telefono)
+  - `Habitacion` - informacion de las habitaciones
+  - `Reserva` - vincula cliente + habitacion con fechas y estado
+  - `Incidencia` - problemas reportados (habitacion, descripcion, fecha)
+  - `ComentarioCliente` - opiniones de los clientes guardadas en MongoDB
+- **Estructura del proyecto:**
+  - `app/menu` - menu principal y submenus
+  - `model/` - clases de dominio
+  - `service/`- logica de negocio
+  - `repository/` - acceso a datos
+  - `validator/`- validaciones con regex
+  - `exception/`- excepciones 
+  - `util/` - conexiones a BD
 
-## 2. Instalación y ejecución
+## 2. Instalacion y ejecucion
 
 ```bash
-# Comandos necesarios para ejecutar el proyecto
 ./gradlew run
 ```
 
-- **Requisitos previos:** <!-- JDK, MongoDB, SGBD, variables de entorno -->
-- **Configuración necesaria:** <!-- Ficheros, puertos, datos de prueba -->
-- **Datos de prueba incluidos:** <!-- Dónde están y cómo se usan -->
+- **Requisitos previos:** JDK 21, Gradle wrapper, conexion a internet. MongoDB Atlas necesita credenciales en `ConexionMongo.kt`.
+- **Configuracion necesaria:** H2 funciona solo, no necesita instalacion. Para MongoDB hay que tener la URI correcta en `util/ConexionMongo.kt`.
+- **Datos de prueba incluidos:** `datos_prueba.json` en la raiz con 10 clientes y 11 reservas. Se importa desde el menu (opcion 5 -> 1).
 
-## 3. Diseño y modelo
+## 3. Diseno y modelo
 
-- **Clases principales:** <!-- Clase -> responsabilidad -->
-- **Relaciones importantes:** <!-- Herencia, interfaces, composición -->
-- **Genéricos usados:** <!-- Clase/interfaz/función y motivo -->
-- **Colecciones usadas:** <!-- Tipo, uso y justificación -->
-- **Principios SOLID aplicados:** <!-- Al menos dos, con enlace al código -->
-- **Patrones de diseño:** <!-- Patrón, problema que resuelve y enlace -->
+- **Clases principales:**
+  - `Cliente` - datos del huesped
+  - `Habitacion` - catalogo de habitaciones
+  - `Reserva` - reserva con estados y control de pago
+  - `Incidencia`- incidencia con fecha y resuelta
+  - `ComentarioCliente` - comentarios en MongoDB
+- **Relaciones importantes:**
+  - `Repositorio<T, ID>`  es una interfaz generica que define el CRUD
+  - `ClienteDao`, `ReservaDao`, `IncidenciaRepository`, etc. implementan `Repositorio`
+  - Los servicios usan `Repositorio` por constructor (DIP)
+- **Genericos usados:** `Repositorio<T, ID>` permite reutilizar el mismo contrato para clientes (String ID), reservas (Int ID), incidencias (String ID), etc.
+- **Colecciones usadas:** `List<T>` para devolver resultados de base de datos. `MutableList` dentro de los DAO para ir agregando filas del `ResultSet`.
+- **Principios SOLID aplicados:**
+  - **SRP:** `ClienteDao` solo accede a clientes, `Validador` solo valida, `ReservaService` solo tiene logica de reservas. Cada clase hace una cosa y solo una.
+  - **OCP:** La interfaz `Repositorio<T, ID>` permite anadir nuevas entidades (como `ComentarioClienteRepository`) sin modificar el codigo existente de la interfaz.
+  - **LSP:** Cualquier implementacion de `Repositorio<T, ID>` (H2 con `ClienteDao`, MongoDB con `IncidenciaRepository`) se puede intercambiar sin que los servicios se enteren.
+  - **ISP:** Las funciones del menu (`nuevaReserva`, `menuIncidencias`, `checkout`) solo dependen de los servicios que realmente necesitan, no de todos. `nuevaReserva` no recibe `IncidenciaService`, `menuIncidencias` no recibe `ReservaService`.
+  - **DIP:** Los servicios reciben `Repositorio<T, ID>` por constructor, no una clase concreta. Ver `service/ClienteService.kt:10`.
+- **Patrones de diseno:**
+  - **DAO:** `ClienteDao`, `ReservaDao`, `HabitacionDao` para separar el SQL de la logica
+  - **Repository:** `IncidenciaRepository` y `ComentarioClienteRepository` para MongoDB
+  - **Singleton:** `ConexionH2` y `ConexionMongo` son object que mantienen una unica conexion
 
 ## 4. Persistencia
 
 ### Ficheros
 
-- **Ficheros usados:** <!-- Nombre y ruta -->
-- **Formato y contenido:** <!-- CSV, JSON, TXT... -->
-- **Lectura/escritura:** <!-- Qué operaciones realiza -->
-- **Clase responsable:** <!-- Enlace al código -->
-- **Errores controlados:** <!-- Qué ocurre si falla -->
+- **Ficheros usados:**
+  - `datos_prueba.json` - importacion de clientes y reservas
+  - `reservas.txt` - informe de reservas generado desde el menu
+  - `incidencias.txt` - informe de incidencias generado desde el menu
+- **Formato y contenido:** JSON para importacion de datos estructurados, TXT para informes legibles.
+- **Lectura/escritura:** Solo lectura de JSON (importacion) y escritura de TXT (informes).
+- **Clase responsable:** `FicheroRepository`.
+- **Errores controlados:** Si el fichero no existe se lanza `FicheroException` (try-catch en el menu `app/Menu.kt`).
 
 ### MongoDB
 
-- **Base de datos:** <!-- Nombre -->
-- **Colecciones:** <!-- Nombre y uso -->
-- **Documento de ejemplo:**
+- **Base de datos:** `hotel_maligno` en MongoDB Atlas
+- **Colecciones:**
+  - `incidencias` - incidencias reportadas durante las estancias
+  - `comentarios_clientes` - comentarios y opiniones de los clientes
+- **Documento de ejemplo (incidencia):**
 
-```json
-{
-  "campo": "valor"
-}
-```
-
-- **Operaciones realizadas:** <!-- Insertar, consultar, modificar, borrar -->
-- **Clase responsable:** <!-- Enlace al código -->
-
+- **Operaciones realizadas:** Insertar, buscar por id, listar todas, filtrar por habitacion, listar pendientes, marcar como resuelta, eliminar.
+- **Clase responsable:** `IncidenciaRepository` y `ComentarioClienteRepository`.
 ### Base de datos relacional
 
-- **SGBD utilizado:** <!-- H2, SQLite, MySQL... -->
-- **Script SQL:** <!-- Ruta del script -->
-- **Tablas y relaciones:** <!-- Resumen -->
-- **Operaciones CRUD:** <!-- Qué entidades cubren -->
-- **Consultas parametrizadas:** <!-- Enlace a ejemplo en código -->
-- **Gestión de conexión y cierre:** <!-- Enlace al código -->
+- **SGBD utilizado:** H2 en modo embebido, fichero `data/gestorhotel.mv.db`.
+- **Script SQL:** No hay fichero SQL separado, las tablas se crean desde `util/ConexionH2.kt` con sentencias CREATE TABLE IF NOT EXISTS.
+- **Tablas y relaciones:**
+  - `clientes` (id VARCHAR PRIMARY KEY, nombre, email, telefono)
+  - `habitaciones` (numero INT PRIMARY KEY, tipo, precio_noche, disponible)
+  - `reservas` (id INT AUTO_INCREMENT, id_cliente FK->clientes, numero_habitacion FK->habitaciones, fecha_entrada, fecha_salida, estado, pagada, num_personas, segundo_huesped)
+- **Operaciones CRUD:** Clientes (`ClienteDao`), habitaciones (`HabitacionDao`), reservas (`ReservaDao`) con CRUD completo.
+- **Consultas parametrizadas:** Todas las consultas usan `PreparedStatement`. Ejemplo en `repository/ClienteDao.kt:22`.
+- **Gestion de conexion:** `ConexionH2` con inicializacion perezosa y `DriverManager.getConnection()` en `util/ConexionH2.kt`.
 
 ## 5. Validaciones y errores
 
-- **Expresiones regulares:** <!-- Dato, regex, ejemplo válido/no válido, enlace -->
-- **Excepciones controladas:** <!-- Tipo de error y respuesta del programa -->
-- **Excepciones propias:** <!-- Si existen, indicar clase y motivo -->
+- **Expresiones regulares** en `validator/Validador.kt`:
+  - **Email:** `^[\w.-]+@[\w.-]+\.\w{2,}$` - Valido: `juan@email.com`, No valido: `juan@.com`
+  - **Telefono:** `^\+?\d{9,15}$` - Valido: `612345678`, No valido: `123`
+  - **NIF:** `^\d{8}[A-Z]$` + modulo 23 - Valido: `12345678Z`, No valido: `12345678A`
+- **Excepciones controladas:** Errores de conexion, busquedas sin resultado, CRUD fallido, fecha mal formateada, NIF/email/telefono invalidos.
+- **Excepciones propias** en `exception/Excepciones.kt`:
+  - `EntidadNoEncontradaException` - cuando no se encuentra un registro
+  - `ValidacionException` - cuando un dato no pasa la validacion
+  - `ConexionBaseDatosException` - error de conexion a BD
+  - `FicheroException` - error de lectura/escritura de ficheros
+  - `MongoDBException` - error al operar con MongoDB
 
 ## 6. Pruebas y evidencias
 
-- **Pruebas realizadas:** <!-- Manuales o automatizadas -->
-- **Datos de prueba:** <!-- Qué datos se usaron -->
-- **Evidencia de ejecución:** <!-- Salida de consola o captura -->
-- **Evidencia de ficheros:** <!-- Fichero generado/leído -->
-- **Evidencia de MongoDB:** <!-- Inserción/consulta -->
-- **Evidencia de SQL:** <!-- CRUD realizado -->
+- **Pruebas realizadas:** Manuales probando cada opcion del menu con los datos de `datos_prueba.json`.
+![ejemploM1.png](Capturas/ejemploM1.png)
+![ejemplom2.png](Capturas/ejemplom2.png)
+![ejemplom3.png](Capturas/ejemplom3.png)
+- **Datos de prueba:** `datos_prueba.json` con 10 clientes de DNI valido y 11 reservas.
+![imports.png](Capturas/imports.png)
+- **Evidencia de ejecucion:** La consola muestra los menus y las operaciones realizadas.
+![funciona.png](Capturas/funciona.png)
+![Checking.png](Capturas/Checking.png)
+![submenu ejemplo.png](Capturas/submenuejemplo.png)
+- **Evidencia de ficheros:** `reservas.txt` e `incidencias.txt` se generan desde la opcion 5 del menu.
+![reservas.png](Capturas/reservas.png)
+![incidencia.png](Capturas/incidencia.png)
+- **Evidencia de MongoDB:** Las incidencias y comentarios se guardan en MongoDB Atlas.
+![incidenciamongodb.png](Capturas/incidenciamongodb.png)
+![comentariomongodb.png](Capturas/comentariomongodb.png)
+- **Evidencia de SQL:** Los datos de clientes, habitaciones y reservas se almacenan en H2.
+![h2cao.png](Capturas/h2cao.png)
+- 
+## 7. Refactorizacion, documentacion y Git
 
-## 7. Refactorización, documentación y Git
-
-- **Refactorizaciones aplicadas:** <!-- Qué se mejoró y por qué -->
-- **Código limpio:** <!-- Ejemplos concretos -->
-- **Documentación:** <!-- KDoc, Dokka, README, diagramas... -->
-- **Control de versiones:** <!-- Commits, ramas, conflictos si los hubo -->
+- **Refactorizaciones aplicadas:** Los menus se separaron en funciones independientes (`nuevaReserva`, `menuReservas`, `menuClientes`, `menuIncidencias`, `menuImportarExportar`, `checkout`) para que el main sea mas legible.
+- **Codigo limpio:** Nombres descriptivos, funciones cortas, estructura de paquetes clara, sin codigo duplicado.
+- **Documentacion:** Este archivo `SOLUCION_2526_PRO_u9_proyecto.md`.
+- **Control de versiones:** Git con commits.
 
 ## 8. Problemas encontrados y soluciones
 
-| Problema | Solución aplicada | Enlace o evidencia |
+| Problema | Solucion aplicada | Enlace o evidencia |
 |----------|-------------------|--------------------|
-| <!-- Problema --> | <!-- Solución --> | <!-- Enlace --> |
+| Gson no sabe serializar LocalDateTime | Cambiar exportacion a TXT en vez de JSON | `repository/FicheroRepository.kt` |
+| MongoDB no se conectaba por la URI | Revisar la cadena de conexion en ConexionMongo | `util/ConexionMongo.kt` |
+| Las reservas no se podian crear con fecha pasada | Validacion en ReservaService (fecha>=hoy) | `service/ReservaService.kt` |
 
-## 9. Respuestas a los criterios de evaluación
+## 9. Respuestas a los criterios de evaluacion
 
-Completa cada criterio con una respuesta breve (Por ejemplo, si habla de clases puedes listar las mas importantes, y entrar en detalle en alguna), técnica y con enlaces al código.
+### 9.1. Diseno general
 
-### 9.1. Diseño general
+El proyecto GESTOR HOTEL es un sistema de gestion de reservas para un hotel. Resuelve el problema de organizar clientes, habitaciones, reservas e incidencias de forma centralizada usando una aplicacion de consola. Va dirigido a recepcionistas que necesitan gestionar las estancias.
 
-<!-- Temática, problema, entidades, funcionalidades, estructura y justificación. -->
+**Entidades principales:** Cliente, Habitacion, Reserva, Incidencia, ComentarioCliente.
+**Funcionalidades:** CRUD de clientes, reservas e incidencias, check-in y check-out, importacion JSON, exportacion TXT.
+**Estructura:** Separacion en capas: `app/` (interfaz), `service/` (logica), `repository/` (datos), `model/` (entidades), `validator/` (validaciones), `exception/` (errores), `util/` (conexiones). Las clases estan en `app/Menu.kt`, `model/Cliente.kt`, `service/ClienteService.kt`, etc.
 
 ### 9.2. Clases y objetos
 
-<!-- Clases, propiedades, métodos, constructores, objetos instanciados y enlaces al código. -->
+Las clases principales son `Cliente`, `Habitacion`, `Reserva`, `Incidencia` y `ComentarioCliente` en `model/`. Todas son `data class` porque su funcion es almacenar datos. Los servicios (`ClienteService`, `ReservaService`) tienen la logica de negocio. Los DAO y repositorios gestionan la persistencia. En `app/Menu.kt` se instancian los servicios y el repositorio de ficheros.
 
-### 9.3. Encapsulación y visibilidad
+### 9.3. Encapsulacion y visibilidad
 
-<!-- Propiedades públicas/privadas, validaciones, métodos de modificación y decisiones. -->
+Las propiedades de las data classes son `val` (inmutables) o `var` (modificables como `estado` y `pagada` en Reserva). Las constantes como `ESTADO_PENDIENTE`, `ESTADO_CONFIRMADA`, etc. son `const val` dentro del companion object de `Reserva` (`model/Reserva.kt`). Los servicios encapsulan la logica y llaman a los validadores antes de modificar datos.
 
 ### 9.4. Colecciones
 
-<!-- Tipo de colección, información almacenada, motivo de elección y enlace al código. -->
+Se usa `List<T>` para devolver resultados (ej: `reservaService.listarReservas()` devuelve `List<Reserva>`). En los DAO se usa `MutableList` internamente para ir agregando filas del `ResultSet` (ej: `repository/ClienteDao.kt`). La eleccion es `List` por ser la interfaz mas simple y adecuada para datos de solo lectura.
 
-### 9.5. Genéricos
+### 9.5. Genericos
 
-<!-- Elemento genérico creado, problema que resuelve, ventaja y enlace al código. -->
+La interfaz `Repositorio<T, ID>` es generica con dos parametros: el tipo de entidad `T` y el tipo de identificador `ID`. Define metodos como `guardar(T): T`, `buscarPorId(ID): T?`, `buscarTodos(): List<T>`, `actualizar(T): T`, `eliminar(ID): Boolean`. Esto permite que `ClienteDao` use `Repositorio<Cliente, String>`, `ReservaDao` use `Repositorio<Reserva, Int>`, etc. sin repetir codigo.
 
 ### 9.6. Herencia, interfaces o clases abstractas
 
-<!-- Relación entre clases/interfaces, ventaja, polimorfismo si existe y enlace al código. -->
+`Repositorio<T, ID>` es una interfaz (no clase abstracta). `ClienteDao`, `ReservaDao`, `HabitacionDao` e `IncidenciaRepository`  la implementan. Esto permite polimorfismo: los servicios pueden trabajar con cualquier implementacion (DIP).
 
 ### 9.7. Expresiones regulares
 
-<!-- Dato validado, expresión regular, ejemplo válido, ejemplo no válido y enlace al código. -->
+En `validator/Validador.kt:5`:
+- **Email:** `^[\w.-]+@[\w.-]+\.\w{2,}$` - Valido: `juan@email.com`, No valido: `juan@.com`
+- **Telefono:** `^\+?\d{9,15}$` - Valido: `+34612345678`, No valido: `abc123`
+- **NIF:** `^\d{8}[A-Z]$` mas modulo 23 con `LETRAS_NIF = "TRWAGMYFPDXBNJZSQVHLCKE"` - Valido: `12345678Z`, No valido: `12345678A` (letra incorrecta)
 
 ### 9.8. Ficheros
 
-<!-- Ficheros, operaciones de lectura/escritura, formato, errores controlados y enlace al código. -->
+`FicheroRepository`. Metodos:
+- `importarDatosPrueba(ruta)` - lee JSON con clientes y reservas usando Gson (`repository/FicheroRepository.kt`)
+- `generarInformeReservas(reservas, ruta)` - genera TXT con listado de reservas (`repository/FicheroRepository.kt`)
+- `exportarIncidenciasATxt(incidencias, ruta)` - genera TXT con incidencias (`repository/FicheroRepository.kt`)
+Si falla se lanza `FicheroException`. Los errores se capturan en `app/Menu.kt`.
 
 ### 9.9. MongoDB
 
-<!-- Base de datos, colecciones, documentos, operaciones realizadas y enlace al código. -->
+Base de datos `hotel_maligno` en MongoDB Atlas. Colecciones:
+- `incidencias` - gestionada por `IncidenciaRepository` (`repository/IncidenciaRepository.kt`)
+- `comentarios_clientes` - gestionada por `ComentarioClienteRepository` (`repository/ComentarioClienteRepository.kt`)
+Operaciones: insertar, buscar por id/ObjectId, listar, filtrar, actualizar (resuelta), eliminar. Las consultas usan `Filters.eq()`, `Filters.and()` de la API de MongoDB.
 
 ### 9.10. Base de datos relacional
 
-<!-- SGBD, tablas, relaciones, script SQL, CRUD, conexión, cierre de recursos, consultas parametrizadas y enlace al código. -->
+SGBD: H2 embebido en `data/gestorhotel.mv.db`. Tablas: `clientes`, `habitaciones`, `reservas` con FK de `reservas.id_cliente` -> `clientes.id` y `reservas.numero_habitacion` -> `habitaciones.numero`. Las tablas se crean en `util/ConexionH2.kt:23` con CREATE TABLE IF NOT EXISTS. CRUD en `ClienteDao`, `ReservaDao`, `HabitacionDao`. Consultas parametrizadas con `PreparedStatement` (ej: `repository/ClienteDao.kt`). Conexion con `DriverManager` en `util/ConexionH2.kt`.
 
 ### 9.11. Excepciones
 
-<!-- Errores controlados, excepciones propias, comportamiento ante error, ejemplos y enlace al código. -->
+Excepciones propias en `exception/Excepciones.kt:`:
+- `EntidadNoEncontradaException` - cuando un buscador no encuentra el registro
+- `ValidacionException` - cuando un dato no pasa la validacion (NIF, email, telefono)
+- `ConexionBaseDatosException` - error al conectar con H2
+- `FicheroException` - error al leer/escribir ficheros
+- `MongoDBException` - error al operar con MongoDB
 
-### 9.12. SOLID y buenas prácticas
+Se capturan en los menus con try-catch mostrando mensajes al usuario. Ej: `app/Menu.kt` captura `EntidadNoEncontradaException` en checkout.
 
-<!-- Principios aplicados, clases donde aparecen, problema que evitan, mejora aportada y enlace al código. -->
+### 9.12. SOLID y buenas practicas
 
-### 9.13. Librerías externas
+- **SRP:** Cada clase tiene una unica responsabilidad. `ClienteDao` solo accede a la tabla de clientes, `Validador` solo valida datos, `ClienteService` solo contiene logica de negocio de clientes, `ConexionH2` solo gestiona la conexion a H2. Ninguna clase mezcla responsabilidades.
+- **OCP:** La interfaz `Repositorio<T, ID>` permite extender el sistema anadiendo nuevos DAOs o repositorios sin modificar el codigo existente. Por ejemplo, se anadio `ComentarioClienteRepository` implementando la misma interfaz sin tocar `Repositorio`.
+- **LSP:** Todas las implementaciones de `Repositorio<T, ID>` (`ClienteDao`, `ReservaDao`, `IncidenciaRepository`) son intercambiables. Los servicios funcionan con cualquiera porque dependen de la abstraccion, no de la implementacion concreta.
+- **ISP:** Las funciones del menu estan separadas para que cada una solo reciba los servicios que necesita. `nuevaReserva(clienteService, reservaService)` no recibe `IncidenciaService`. `menuIncidencias(incidenciaService)` no recibe servicios de clientes. Ninguna funcion depende de metodos que no usa.
+- **DIP:** Los servicios reciben `Repositorio<T, ID>` en su constructor como parametro, no instancian directamente clases concretas. Esto permite cambiar la implementacion (H2, MongoDB, ficheros) sin modificar el servicio.
 
-<!-- Nombre, finalidad, configuración, uso en código y motivo. -->
+### 9.13. Librerias externas
+
+En `build.gradle.kts`:
+- **org.mongodb:mongodb-driver-sync:4.11.1** - Cliente oficial de MongoDB para conexion con Atlas
+- **com.h2database:h2:2.2.224** - Base de datos relacional embebida
+- **com.google.code.gson:gson:2.10.1** - Serializacion JSON para ficheros
+- **org.slf4j:slf4j-simple:2.0.9** - Logs de las librerias (MongoDB, H2)
+- **io.kotest:kotest-runner-junit5:5.8.0** - Framework de testing
 
 ### 9.14. Pruebas y evidencias
 
-<!-- Pruebas, datos, salidas, capturas si procede, ficheros generados, MongoDB y SQL. -->
+Pruebas manuales ejecutando la aplicacion y probando cada opcion del menu. Los datos de prueba se importan desde `datos_prueba.json` (opcion 5 -> 1). Se puede verificar:
+- CRUD de clientes (opcion 3), reservas (opcion 2), incidencias (opcion 4)
+- Check-in (opcion 1) y check-out (opcion 6)
+- Importacion y exportacion (opcion 5)
+- Los ficheros TXT se generan en la raiz del proyecto
 
-### 9.15. Refactorización y código limpio
+### 9.15. Refactorizacion y codigo limpio
 
-<!-- Técnicas aplicadas, mejoras conseguidas, ejemplos y enlaces. -->
+Los menus se extrajeron a funciones separadas: `nuevaReserva`, `menuReservas`, `menuClientes`, `menuIncidencias`, `menuImportarExportar`, `checkout` en `app/Menu.kt`. Esto evita un main de 500+ lineas. Nombres de variables descriptivos, estructura de paquetes clara, sin codigo repetido.
 
-### 9.16. Patrones de diseño
+### 9.16. Patrones de diseno
 
-<!-- Patrón aplicado, ubicación, problema que resuelve, ventaja y enlace al código. -->
+- **DAO:** `ClienteDao`, `ReservaDao`, `HabitacionDao` encapsulan el acceso a H2 con SQL
+- **Repository:** `IncidenciaRepository` y `ComentarioClienteRepository` encapsulan el acceso a MongoDB
+- **Singleton:** `ConexionH2` y `ConexionMongo` como `object` de Kotlin
+- **Dependency Injection:** Los servicios reciben sus dependencias por constructor (ej: `service/ClienteService.kt`)
 
-### 9.17. Documentación
+### 9.17. Documentacion
 
-<!-- Herramientas, partes documentadas, formato, ejemplo y enlace. -->
+Este archivo `SOLUCION_2526_PRO_u9_proyecto.md` contiene toda la documentacion. Los ficheros exportados se guardan en la raiz del proyecto. El README.md contiene el enunciado del proyecto.
 
 ### 9.18. Control de versiones
 
-<!-- Git, commits, ramas, conflictos si existen, repositorio e historial. -->
+Git con commits incrementales: cada commit anade una funcionalidad completa (modelo, DAOs, servicios, menus). El repositorio contiene todo el codigo fuente, el JSON de datos de prueba y este documento.
 
 ## 10. Conclusiones
 
-- **Qué he aprendido:** <!-- Resumen -->
-- **Qué mejoraría si tuviera más tiempo:** <!-- Mejoras realistas -->
-- **Decisión técnica más importante:** <!-- Decisión y motivo -->
+- **Que he aprendido:** A integrar tres tipos de persistencia (H2, MongoDB, ficheros) en una misma app Kotlin, usar genericos con `Repositorio<T, ID>`, aplicar SRP y DIP, y hacer validaciones con expresiones regulares.
+- **Que mejoraria si tuviera mas tiempo:** Pruebas automatizadas con Kotest, validar disponibilidad de habitaciones por fechas, interfaz grafica, y mas control de errores en la entrada de datos y base de datos real de habitaciones.
+- **Decision tecnica mas importante:** Usar H2 embebido como BD relacional para que no haga falta instalar nada externo, y MongoDB Atlas para las incidencias porque es una coleccion que crece mucho y no necesita relaciones.
 
-## 11. Autoevaluación
+## 11. Autoevaluacion
 
-Indica en cada criterio el nivel o puntuación que consideras que has alcanzado. Usa la escala de la guía de evaluación: `0`, `2.5`, `5`, `7.5` o `10`. Justifica siempre la puntuación con evidencias concretas: clases, funciones, commits, capturas, documentación o enlaces al código.
+### 11.1. Programacion
 
-### 11.1. Programación
-
-| Criterio | Puntuación/Nivel | Justificación de la puntuación |
+| Criterio | Puntuacion/Nivel | Justificacion de la puntuacion |
 |----------|------------------|--------------------------------|
-| Completitud de requisitos mínimos | <!-- 0 / 2.5 / 5 / 7.5 / 10 --> | <!-- Justifica el cumplimiento de POO, colecciones, genéricos, herencia/interfaces, regex, excepciones, SOLID, librerías, pruebas y evidencias. --> |
-| Acceso a ficheros | <!-- 0 / 2.5 / 5 / 7.5 / 10 --> | <!-- Indica ficheros usados, formato, operaciones de lectura/escritura, clase responsable y control de errores. --> |
-| Integración de MongoDB | <!-- 0 / 2.5 / 5 / 7.5 / 10 --> | <!-- Indica base de datos, colecciones, documentos, operaciones y clase responsable. --> |
-| Base de datos relacional y operaciones CRUD | <!-- 0 / 2.5 / 5 / 7.5 / 10 --> | <!-- Indica SGBD, tablas, relaciones, script SQL, CRUD, conexión, cierre de recursos y consultas parametrizadas. --> |
-| Preguntas de evaluación de Programación | <!-- 0 / 2.5 / 5 / 7.5 / 10 --> | <!-- Justifica si las respuestas de Programación están completas, son técnicas e incluyen enlaces y evidencias. --> |
+| Completitud de requisitos minimos | 7.5 | POO con data classes, colecciones (List), genericos (Repositorio<T, ID>), interfaces (Repositorio), regex (Validador), 5 excepciones propias, SOLID (SRP, DIP), 5 librerias externas. |
+| Acceso a ficheros | 5 | Importacion JSON con Gson y exportacion TXT. No hay exportacion a JSON de datos actuales. |
+| Integracion de MongoDB | 7.5 | Dos colecciones (incidencias y comentarios) con CRUD completo en MongoDB Atlas. |
+| Base de datos relacional y operaciones CRUD | 7.5 | H2 con 3 tablas relacionadas, FK, CRUD mediante DAO, PreparedStatement. |
+| Preguntas de evaluacion de Programacion | 7.5 | Respondidas con enlaces al codigo y justificacion tecnica. |
 
 ### 11.2. Entornos de Desarrollo
 
-| Criterio | Puntuación/Nivel | Justificación de la puntuación |
+| Criterio | Puntuacion/Nivel | Justificacion de la puntuacion |
 |----------|------------------|--------------------------------|
-| Refactorización y código limpio | <!-- 0 / 2.5 / 5 / 7.5 / 10 --> | <!-- Refactorizaciones, técnicas aplicadas, mejoras y ejemplos. --> |
-| Patrones de diseño | <!-- 0 / 2.5 / 5 / 7.5 / 10 --> | <!-- Patrón usado, ubicación, problema resuelto y ventaja. --> |
-| Documentación | <!-- 0 / 2.5 / 5 / 7.5 / 10 --> | <!-- Herramientas, partes documentadas, formato y ejemplo. --> |
+| Refactorizacion y codigo limpio | <!-- 0 / 2.5 / 5 / 7.5 / 10 --> | <!-- Refactorizaciones, tecnicas aplicadas, mejoras y ejemplos. --> |
+| Patrones de diseno | <!-- 0 / 2.5 / 5 / 7.5 / 10 --> | <!-- Patron usado, ubicacion, problema resuelto y ventaja. --> |
+| Documentacion | <!-- 0 / 2.5 / 5 / 7.5 / 10 --> | <!-- Herramientas, partes documentadas, formato y ejemplo. --> |
 | Control de versiones | <!-- 0 / 2.5 / 5 / 7.5 / 10 --> | <!-- Commits, ramas, repositorio, conflictos si existen e historial. --> |
-| Preguntas de evaluación de Entornos de Desarrollo | <!-- 0 / 2.5 / 5 / 7.5 / 10 --> | <!-- Justifica si las respuestas de Entornos están completas, son técnicas e incluyen enlaces y evidencias. --> |
+| Preguntas de evaluacion de Entornos de Desarrollo | <!-- 0 / 2.5 / 5 / 7.5 / 10 --> | <!-- Justifica si las respuestas de Entornos estan completas, son tecnicas e incluyen enlaces y evidencias. --> |

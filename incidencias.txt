@@ -1,4 +1,4 @@
-INFORME DE INCIDENCIAS - HOTEL MALIGNO
+INFORME DE INCIDENCIAS - GESTOR HOTEL
 ==================================================
 Total de incidencias: 1
 

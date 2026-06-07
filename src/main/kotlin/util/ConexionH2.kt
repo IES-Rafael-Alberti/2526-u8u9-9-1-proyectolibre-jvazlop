@@ -7,7 +7,7 @@ import java.sql.Statement
 
 object ConexionH2 {
 
-    private const val URL = "jdbc:h2:./data/hotelmaligno;DB_CLOSE_DELAY=-1"
+    private const val URL = "jdbc:h2:./data/gestorhotel;DB_CLOSE_DELAY=-1"
     private const val USUARIO = "sa"
     private const val CONTRASENA = ""
 
