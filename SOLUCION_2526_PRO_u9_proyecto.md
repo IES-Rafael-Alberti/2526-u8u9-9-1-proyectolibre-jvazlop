@@ -2,7 +2,7 @@
 
 - **Proyecto:** GESTOR HOTEL - Sistema de Gestion de Reservas
 - **Alumno/a:** Jordi Antonio Vázquez López
-- **Repositorio:** <!-- URL del repositorio -->
+- **Repositorio:** https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop
 
 ## 1. Resumen del proyecto
 
@@ -298,15 +298,15 @@ https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/9
   
 - **Singleton:** `ConexionH2` y `ConexionMongo` como `object` de Kotlin
   https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/943ddf447dbb9bc99c15f9b86bfed676d9f74ddc/src/main/kotlin/util/ConexionH2.kt#L8
-- **Dependency Injection:** Los servicios reciben sus dependencias por constructor (ej: `service/ClienteService.kt`)
-
+- **Dependency Injection:** Los servicios reciben sus dependencias por constructor.
+https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/974d4e0049f186a4334dcb45d576aca4bc565dd9/src/main/kotlin/service/ClienteService.kt#L9
 ### 9.17. Documentacion
 
-Este archivo `SOLUCION_2526_PRO_u9_proyecto.md` contiene toda la documentacion. Los ficheros exportados se guardan en la raiz del proyecto. El README.md contiene el enunciado del proyecto.
+Este archivo `SOLUCION_2526_PRO_u9_proyecto.md` contiene toda la documentacion.
 
 ### 9.18. Control de versiones
 
-Git con commits incrementales: cada commit anade una funcionalidad completa (modelo, DAOs, servicios, menus). El repositorio contiene todo el codigo fuente, el JSON de datos de prueba y este documento.
+Git con commits incrementales: cada commit anade una funcionalidad completa (modelo, DAOs, servicios, menus)
 
 ## 10. Conclusiones
 
@@ -321,7 +321,7 @@ Git con commits incrementales: cada commit anade una funcionalidad completa (mod
 | Criterio | Puntuacion/Nivel | Justificacion de la puntuacion |
 |----------|------------------|--------------------------------|
 | Completitud de requisitos minimos | 7.5 | POO con data classes, colecciones (List), genericos (Repositorio<T, ID>), interfaces (Repositorio), regex (Validador), 5 excepciones propias, SOLID (SRP, DIP), 5 librerias externas. |
-| Acceso a ficheros | 5 | Importacion JSON con Gson y exportacion TXT. No hay exportacion a JSON de datos actuales. |
+| Acceso a ficheros | 5 | Importacion JSON con Gson y exportacion TXT.Hay exportacion a JSON de datos actuales pero no csv |
 | Integracion de MongoDB | 7.5 | Dos colecciones (incidencias y comentarios) con CRUD completo en MongoDB Atlas. |
 | Base de datos relacional y operaciones CRUD | 7.5 | H2 con 3 tablas relacionadas, FK, CRUD mediante DAO, PreparedStatement. |
 | Preguntas de evaluacion de Programacion | 7.5 | Respondidas con enlaces al codigo y justificacion tecnica. |
