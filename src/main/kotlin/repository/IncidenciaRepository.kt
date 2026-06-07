@@ -9,10 +9,21 @@ import org.iesra.util.ConexionMongo
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+/**
+ * Implementación del repositorio de incidencias usando MongoDB.
+ * Proporciona operaciones CRUD para la entidad [Incidencia] y métodos adicionales de búsqueda.
+ */
 class IncidenciaRepository : Repositorio<Incidencia, String> {
 
     private val formatoFecha = DateTimeFormatter.ISO_LOCAL_DATE_TIME
 
+    /**
+     * Guarda una nueva incidencia en MongoDB.
+     *
+     * @param entidad La incidencia a guardar.
+     * @return La incidencia guardada con el id asignado por MongoDB.
+     * @throws MongoDBException si ocurre un error al guardar.
+     */
     override fun guardar(entidad: Incidencia): Incidencia {
         try {
             val coleccion = ConexionMongo.obtenerColeccion()
@@ -28,6 +39,13 @@ class IncidenciaRepository : Repositorio<Incidencia, String> {
         }
     }
 
+    /**
+     * Busca una incidencia por su identificador.
+     *
+     * @param id El identificador de la incidencia.
+     * @return La incidencia encontrada, o null si no existe.
+     * @throws MongoDBException si ocurre un error al buscar.
+     */
     override fun buscarPorId(id: String): Incidencia? {
         try {
             val coleccion = ConexionMongo.obtenerColeccion()
@@ -38,6 +56,12 @@ class IncidenciaRepository : Repositorio<Incidencia, String> {
         }
     }
 
+    /**
+     * Obtiene todas las incidencias.
+     *
+     * @return Lista con todas las incidencias.
+     * @throws MongoDBException si ocurre un error al listar.
+     */
     override fun buscarTodos(): List<Incidencia> {
         try {
             val coleccion = ConexionMongo.obtenerColeccion()
@@ -47,6 +71,13 @@ class IncidenciaRepository : Repositorio<Incidencia, String> {
         }
     }
 
+    /**
+     * Busca todas las incidencias de una habitación específica.
+     *
+     * @param numeroHabitacion El número de la habitación.
+     * @return Lista de incidencias de la habitación.
+     * @throws MongoDBException si ocurre un error al buscar.
+     */
     fun buscarPorHabitacion(numeroHabitacion: Int): List<Incidencia> {
         try {
             val coleccion = ConexionMongo.obtenerColeccion()
@@ -57,6 +88,12 @@ class IncidenciaRepository : Repositorio<Incidencia, String> {
         }
     }
 
+    /**
+     * Obtiene todas las incidencias que aún no han sido resueltas.
+     *
+     * @return Lista de incidencias no resueltas.
+     * @throws MongoDBException si ocurre un error al buscar.
+     */
     fun buscarNoResueltas(): List<Incidencia> {
         try {
             val coleccion = ConexionMongo.obtenerColeccion()
@@ -67,6 +104,13 @@ class IncidenciaRepository : Repositorio<Incidencia, String> {
         }
     }
 
+    /**
+     * Actualiza los datos de una incidencia existente.
+     *
+     * @param entidad La incidencia con los datos actualizados.
+     * @return La incidencia actualizada.
+     * @throws MongoDBException si no existe una incidencia con ese id o si ocurre un error.
+     */
     override fun actualizar(entidad: Incidencia): Incidencia {
         try {
             val coleccion = ConexionMongo.obtenerColeccion()
@@ -86,6 +130,13 @@ class IncidenciaRepository : Repositorio<Incidencia, String> {
         }
     }
 
+    /**
+     * Elimina una incidencia por su identificador.
+     *
+     * @param id El identificador de la incidencia a eliminar.
+     * @return true si se eliminó correctamente, false en caso contrario.
+     * @throws MongoDBException si ocurre un error al eliminar.
+     */
     override fun eliminar(id: String): Boolean {
         try {
             val coleccion = ConexionMongo.obtenerColeccion()
@@ -96,6 +147,12 @@ class IncidenciaRepository : Repositorio<Incidencia, String> {
         }
     }
 
+    /**
+     * Convierte un documento de MongoDB en una entidad [Incidencia].
+     *
+     * @param doc El documento de MongoDB.
+     * @return La entidad [Incidencia] construida a partir del documento.
+     */
     private fun documentAEntidad(doc: Document): Incidencia {
         return Incidencia(
             id = doc.getObjectId("_id").toHexString(),

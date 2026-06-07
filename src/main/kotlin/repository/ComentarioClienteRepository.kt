@@ -11,10 +11,21 @@ import java.time.format.DateTimeFormatter
 
 private const val COLECCION_COMENTARIOS = "comentarios_clientes"
 
+/**
+ * Repositorio para gestionar comentarios de clientes usando MongoDB.
+ * Proporciona operaciones de guardado, búsqueda y eliminación de comentarios.
+ */
 class ComentarioClienteRepository {
 
     private val formatoFecha = DateTimeFormatter.ISO_LOCAL_DATE_TIME
 
+    /**
+     * Guarda un nuevo comentario de cliente en MongoDB.
+     *
+     * @param entidad El comentario a guardar.
+     * @return El comentario guardado con el id asignado por MongoDB.
+     * @throws MongoDBException si ocurre un error al guardar.
+     */
     fun guardar(entidad: ComentarioCliente): ComentarioCliente {
         try {
             val coleccion = ConexionMongo.obtenerColeccion(COLECCION_COMENTARIOS)
@@ -28,6 +39,13 @@ class ComentarioClienteRepository {
         }
     }
 
+    /**
+     * Busca un comentario por su identificador.
+     *
+     * @param id El identificador del comentario.
+     * @return El comentario encontrado, o null si no existe.
+     * @throws MongoDBException si ocurre un error al buscar.
+     */
     fun buscarPorId(id: String): ComentarioCliente? {
         try {
             val coleccion = ConexionMongo.obtenerColeccion(COLECCION_COMENTARIOS)
@@ -38,6 +56,12 @@ class ComentarioClienteRepository {
         }
     }
 
+    /**
+     * Obtiene todos los comentarios de clientes.
+     *
+     * @return Lista con todos los comentarios.
+     * @throws MongoDBException si ocurre un error al listar.
+     */
     fun buscarTodos(): List<ComentarioCliente> {
         try {
             val coleccion = ConexionMongo.obtenerColeccion(COLECCION_COMENTARIOS)
@@ -47,6 +71,13 @@ class ComentarioClienteRepository {
         }
     }
 
+    /**
+     * Elimina un comentario por su identificador.
+     *
+     * @param id El identificador del comentario a eliminar.
+     * @return true si se eliminó correctamente, false en caso contrario.
+     * @throws MongoDBException si ocurre un error al eliminar.
+     */
     fun eliminar(id: String): Boolean {
         try {
             val coleccion = ConexionMongo.obtenerColeccion(COLECCION_COMENTARIOS)
@@ -57,6 +88,12 @@ class ComentarioClienteRepository {
         }
     }
 
+    /**
+     * Convierte un documento de MongoDB en una entidad [ComentarioCliente].
+     *
+     * @param doc El documento de MongoDB.
+     * @return La entidad [ComentarioCliente] construida a partir del documento.
+     */
     private fun documentAEntidad(doc: Document): ComentarioCliente {
         return ComentarioCliente(
             id = doc.getObjectId("_id").toHexString(),

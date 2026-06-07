@@ -8,8 +8,18 @@ import java.sql.PreparedStatement
 import java.sql.ResultSet
 import java.time.LocalDate
 
+/**
+ * Implementación del repositorio de reservas usando una base de datos H2.
+ * Proporciona operaciones CRUD para la entidad [Reserva] y métodos adicionales de búsqueda.
+ */
 class ReservaDao : Repositorio<Reserva, Int> {
 
+    /**
+     * Guarda una nueva reserva en la base de datos y asigna el identificador generado.
+     *
+     * @param entidad La reserva a guardar.
+     * @return La reserva guardada con el id asignado.
+     */
     override fun guardar(entidad: Reserva): Reserva {
         val conexion = ConexionH2.obtenerConexion()
         val sql = """
@@ -33,6 +43,12 @@ class ReservaDao : Repositorio<Reserva, Int> {
         return entidad.copy(id = idGenerado)
     }
 
+    /**
+     * Busca una reserva por su identificador.
+     *
+     * @param id El identificador de la reserva.
+     * @return La reserva encontrada, o null si no existe.
+     */
     override fun buscarPorId(id: Int): Reserva? {
         val conexion = ConexionH2.obtenerConexion()
         val sql = "SELECT * FROM reservas WHERE id = ?"
@@ -47,6 +63,11 @@ class ReservaDao : Repositorio<Reserva, Int> {
         return reserva
     }
 
+    /**
+     * Obtiene todas las reservas ordenadas por fecha de entrada descendente.
+     *
+     * @return Lista con todas las reservas.
+     */
     override fun buscarTodos(): List<Reserva> {
         val conexion = ConexionH2.obtenerConexion()
         val sql = "SELECT * FROM reservas ORDER BY fecha_entrada DESC"
@@ -61,6 +82,12 @@ class ReservaDao : Repositorio<Reserva, Int> {
         return reservas
     }
 
+    /**
+     * Busca todas las reservas asociadas a un cliente.
+     *
+     * @param idCliente El identificador del cliente.
+     * @return Lista de reservas del cliente ordenadas por fecha de entrada descendente.
+     */
     fun buscarPorCliente(idCliente: String): List<Reserva> {
         val conexion = ConexionH2.obtenerConexion()
         val sql = "SELECT * FROM reservas WHERE id_cliente = ? ORDER BY fecha_entrada DESC"
@@ -76,6 +103,13 @@ class ReservaDao : Repositorio<Reserva, Int> {
         return reservas
     }
 
+    /**
+     * Actualiza los datos de una reserva existente.
+     *
+     * @param entidad La reserva con los datos actualizados.
+     * @return La reserva actualizada.
+     * @throws EntidadNoEncontradaException si no existe una reserva con ese id.
+     */
     override fun actualizar(entidad: Reserva): Reserva {
         val conexion = ConexionH2.obtenerConexion()
         val sql = """
@@ -101,6 +135,12 @@ class ReservaDao : Repositorio<Reserva, Int> {
         return entidad
     }
 
+    /**
+     * Elimina una reserva por su identificador.
+     *
+     * @param id El identificador de la reserva a eliminar.
+     * @return true si se eliminó correctamente, false en caso contrario.
+     */
     override fun eliminar(id: Int): Boolean {
         val conexion = ConexionH2.obtenerConexion()
         val sql = "DELETE FROM reservas WHERE id = ?"
@@ -111,6 +151,12 @@ class ReservaDao : Repositorio<Reserva, Int> {
         return filasAfectadas > 0
     }
 
+    /**
+     * Convierte un [ResultSet] en una entidad [Reserva].
+     *
+     * @param r El resultado de la consulta SQL.
+     * @return La entidad [Reserva] construida a partir del resultado.
+     */
     private fun resultadoAEntidad(r: ResultSet): Reserva {
         return Reserva(
             id = r.getInt("id"),

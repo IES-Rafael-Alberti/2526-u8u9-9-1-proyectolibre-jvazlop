@@ -5,6 +5,10 @@ import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.Statement
 
+/**
+ * Objeto singleton para la gestión de la conexión con la base de datos H2.
+ * Proporciona métodos para obtener, cerrar la conexión e inicializar las tablas.
+ */
 object ConexionH2 {
 
     private const val URL = "jdbc:h2:./data/gestorhotel;DB_CLOSE_DELAY=-1"
@@ -13,6 +17,12 @@ object ConexionH2 {
 
     private var conexion: Connection? = null
 
+    /**
+     * Obtiene la conexión a la base de datos H2.
+     * Si la conexión no existe o está cerrada, crea una nueva.
+     * @return Conexión activa a H2
+     * @throws ConexionBaseDatosException si no se puede establecer la conexión
+     */
     fun obtenerConexion(): Connection {
         if (conexion == null || conexion?.isClosed == true) {
             try {
@@ -25,6 +35,10 @@ object ConexionH2 {
         return conexion ?: throw ConexionBaseDatosException("La conexion H2 no se pudo establecer")
     }
 
+    /**
+     * Cierra la conexión con la base de datos H2.
+     * @throws ConexionBaseDatosException si ocurre un error al cerrar la conexión
+     */
     fun cerrarConexion() {
         try {
             conexion?.close()
@@ -34,6 +48,11 @@ object ConexionH2 {
         }
     }
 
+    /**
+     * Inicializa las tablas necesarias en la base de datos H2 si no existen.
+     * Crea las tablas de clientes, habitaciones y reservas.
+     * @throws ConexionBaseDatosException si ocurre un error al crear las tablas
+     */
     fun inicializarTablas() {
         val conexion = obtenerConexion()
         try {

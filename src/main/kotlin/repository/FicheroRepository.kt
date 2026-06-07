@@ -8,11 +8,25 @@ import org.iesra.model.Reserva
 import java.io.File
 import java.time.LocalDate
 
+/**
+ * Datos de importación provenientes de un archivo JSON.
+ *
+ * @property clientes Lista de clientes importados.
+ * @property reservas Lista de reservas importadas en formato JSON.
+ */
 data class DatosImportacion(
     val clientes: List<Cliente>,
     val reservas: List<ReservaJson>
 )
 
+/**
+ * Representa una reserva en el formato utilizado durante la importación desde JSON.
+ *
+ * @property idCliente Identificador del cliente asociado a la reserva.
+ * @property numeroHabitacion Número de la habitación reservada.
+ * @property fechaEntrada Fecha de entrada en formato texto.
+ * @property fechaSalida Fecha de salida en formato texto.
+ */
 data class ReservaJson(
     val idCliente: String,
     val numeroHabitacion: Int,
@@ -20,10 +34,21 @@ data class ReservaJson(
     val fechaSalida: String
 )
 
+/**
+ * Repositorio para operaciones de exportación e importación de datos mediante archivos.
+ * Permite exportar e importar datos en formato JSON y generar informes de texto.
+ */
 class FicheroRepository {
 
     private val gson = Gson()
 
+    /**
+     * Exporta una lista de clientes a un archivo JSON.
+     *
+     * @param clientes Lista de clientes a exportar.
+     * @param ruta Ruta del archivo de destino.
+     * @throws FicheroException si ocurre un error durante la exportación.
+     */
     fun exportarClientesAJson(clientes: List<Cliente>, ruta: String) {
         try {
             val json = gson.toJson(clientes)
@@ -33,6 +58,13 @@ class FicheroRepository {
         }
     }
 
+    /**
+     * Genera un informe de texto con los datos de las reservas.
+     *
+     * @param reservas Lista de reservas a incluir en el informe.
+     * @param ruta Ruta del archivo de destino.
+     * @throws FicheroException si ocurre un error al generar el informe.
+     */
     fun generarInformeReservas(reservas: List<Reserva>, ruta: String) {
         try {
             val lineas = mutableListOf("INFORME DE RESERVAS - GESTOR HOTEL")
@@ -50,6 +82,13 @@ class FicheroRepository {
         }
     }
 
+    /**
+     * Importa datos de prueba desde un archivo JSON.
+     *
+     * @param ruta Ruta del archivo JSON a importar.
+     * @return Los datos importados en un objeto [DatosImportacion].
+     * @throws FicheroException si ocurre un error durante la importación.
+     */
     fun importarDatosPrueba(ruta: String): DatosImportacion {
         try {
             val json = File(ruta).readText()
@@ -59,6 +98,13 @@ class FicheroRepository {
         }
     }
 
+    /**
+     * Exporta una lista de incidencias a un archivo de texto.
+     *
+     * @param incidencias Lista de incidencias a exportar.
+     * @param ruta Ruta del archivo de destino.
+     * @throws FicheroException si ocurre un error durante la exportación.
+     */
     fun exportarIncidenciasATxt(incidencias: List<Incidencia>, ruta: String) {
         try {
             val lineas = mutableListOf("INFORME DE INCIDENCIAS - GESTOR HOTEL")

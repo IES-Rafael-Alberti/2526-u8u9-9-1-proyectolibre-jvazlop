@@ -14,6 +14,10 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 
+/**
+ * Punto de entrada principal de la aplicación.
+ * Inicializa los servicios, la base de datos H2 y ejecuta el bucle del menú principal.
+ */
 fun main() {
     val clienteService = ClienteService()
     val reservaService = ReservaService()
@@ -54,6 +58,11 @@ fun main() {
     }
 }
 
+/**
+ * Menú interactivo para la gestión de incidencias.
+ * Permite reportar, buscar, listar, filtrar por habitación, resolver y eliminar incidencias.
+ * @param service Servicio de incidencias
+ */
 fun menuIncidencias(service: IncidenciaService) {
     var menu = true
     while (menu) {
@@ -187,6 +196,12 @@ fun menuIncidencias(service: IncidenciaService) {
     }
 }
 
+/**
+ * Proceso interactivo de check-in.
+ * Solicita los datos del cliente y de la reserva, y la registra en el sistema.
+ * @param clienteService Servicio de clientes
+ * @param reservaService Servicio de reservas
+ */
 fun nuevaReserva(clienteService: ClienteService, reservaService: ReservaService) {
     val formatoFecha = DateTimeFormatter.ofPattern("dd/MM/yyyy")
 
@@ -264,6 +279,12 @@ fun nuevaReserva(clienteService: ClienteService, reservaService: ReservaService)
     }
 }
 
+/**
+ * Menú interactivo para la gestión de reservas.
+ * Permite buscar, listar, modificar fechas, pagar, cancelar y eliminar reservas.
+ * @param reservaService Servicio de reservas
+ * @param clienteService Servicio de clientes
+ */
 fun menuReservas(reservaService: ReservaService, clienteService: ClienteService) {
     val formatoFecha = DateTimeFormatter.ofPattern("dd/MM/yyyy")
     var menu = true
@@ -333,6 +354,12 @@ fun menuReservas(reservaService: ReservaService, clienteService: ClienteService)
     }
 }
 
+/**
+ * Solicita al usuario un NIF de cliente, lista sus reservas y permite seleccionar una.
+ * @param reservaService Servicio de reservas
+ * @param clienteService Servicio de clientes
+ * @return La reserva seleccionada, o null si no se encontró ninguna
+ */
 fun seleccionarReserva(reservaService: ReservaService, clienteService: ClienteService): Reserva? {
     print("NIF del cliente: ")
     val nif = readlnOrNull()?.trim() ?: return null
@@ -349,6 +376,12 @@ fun seleccionarReserva(reservaService: ReservaService, clienteService: ClienteSe
     return reservaService.buscarReserva(id)
 }
 
+/**
+ * Permite modificar las fechas de entrada y salida de una reserva seleccionada.
+ * @param reservaService Servicio de reservas
+ * @param clienteService Servicio de clientes
+ * @param formatoFecha Formato de fecha (dd/MM/yyyy)
+ */
 fun modificarFechasReserva(reservaService: ReservaService, clienteService: ClienteService, formatoFecha: DateTimeFormatter) {
     try {
         val reserva = seleccionarReserva(reservaService, clienteService) ?: return
@@ -366,6 +399,11 @@ fun modificarFechasReserva(reservaService: ReservaService, clienteService: Clien
     }
 }
 
+/**
+ * Marca una reserva seleccionada como pagada.
+ * @param reservaService Servicio de reservas
+ * @param clienteService Servicio de clientes
+ */
 fun pagarReserva(reservaService: ReservaService, clienteService: ClienteService) {
     try {
         val reserva = seleccionarReserva(reservaService, clienteService) ?: return
@@ -376,6 +414,11 @@ fun pagarReserva(reservaService: ReservaService, clienteService: ClienteService)
     }
 }
 
+/**
+ * Cancela una reserva seleccionada.
+ * @param reservaService Servicio de reservas
+ * @param clienteService Servicio de clientes
+ */
 fun cancelarReserva(reservaService: ReservaService, clienteService: ClienteService) {
     try {
         val reserva = seleccionarReserva(reservaService, clienteService) ?: return
@@ -386,6 +429,11 @@ fun cancelarReserva(reservaService: ReservaService, clienteService: ClienteServi
     }
 }
 
+/**
+ * Elimina una reserva seleccionada del sistema.
+ * @param reservaService Servicio de reservas
+ * @param clienteService Servicio de clientes
+ */
 fun eliminarReserva(reservaService: ReservaService, clienteService: ClienteService) {
     try {
         val reserva = seleccionarReserva(reservaService, clienteService) ?: return
@@ -397,6 +445,11 @@ fun eliminarReserva(reservaService: ReservaService, clienteService: ClienteServi
     }
 }
 
+/**
+ * Muestra por pantalla los datos de una reserva.
+ * @param reserva Reserva a mostrar
+ * @param clienteService Servicio de clientes para obtener el nombre del cliente
+ */
 fun mostrarReserva(reserva: Reserva, clienteService: ClienteService) {
     val nombreCliente = try {
         clienteService.buscarCliente(reserva.idCliente).nombre
@@ -410,6 +463,12 @@ fun mostrarReserva(reserva: Reserva, clienteService: ClienteService) {
     println("  Estado: ${reserva.estado} | Pagada: ${if (reserva.pagada) "Si" else "No"}")
 }
 
+/**
+ * Menú interactivo para la gestión de clientes.
+ * Permite registrar, buscar, listar, actualizar, eliminar clientes y gestionar comentarios.
+ * @param service Servicio de clientes
+ * @param comentarioService Servicio de comentarios de clientes
+ */
 fun menuClientes(service: ClienteService, comentarioService: ComentarioClienteService) {
     var menu = true
     while (menu) {
@@ -521,6 +580,14 @@ fun menuClientes(service: ClienteService, comentarioService: ComentarioClienteSe
     }
 }
 
+/**
+ * Menú interactivo para la importación y exportación de datos.
+ * Permite importar reservas desde JSON y exportar reservas, incidencias y clientes.
+ * @param clienteService Servicio de clientes
+ * @param reservaService Servicio de reservas
+ * @param incidenciaService Servicio de incidencias
+ * @param ficheroRepo Repositorio de ficheros para importación/exportación
+ */
 fun menuImportarExportar(
     clienteService: ClienteService,
     reservaService: ReservaService,
@@ -611,6 +678,13 @@ fun menuImportarExportar(
     }
 }
 
+/**
+ * Proceso interactivo de check-out.
+ * Finaliza una reserva activa, permite reportar incidencias y realizar el pago pendiente.
+ * @param clienteService Servicio de clientes
+ * @param reservaService Servicio de reservas
+ * @param incidenciaService Servicio de incidencias
+ */
 fun checkout(clienteService: ClienteService, reservaService: ReservaService, incidenciaService: IncidenciaService) {
     try {
         println("\n--- CHECKOUT ---")

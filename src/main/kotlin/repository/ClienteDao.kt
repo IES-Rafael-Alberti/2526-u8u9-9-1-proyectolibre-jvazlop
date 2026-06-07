@@ -6,8 +6,18 @@ import org.iesra.util.ConexionH2
 import java.sql.PreparedStatement
 import java.sql.ResultSet
 
+/**
+ * Implementación del repositorio de clientes usando una base de datos H2.
+ * Proporciona operaciones CRUD para la entidad [Cliente].
+ */
 class ClienteDao : Repositorio<Cliente, String> {
 
+    /**
+     * Guarda un nuevo cliente en la base de datos.
+     *
+     * @param entidad El cliente a guardar.
+     * @return El cliente guardado.
+     */
     override fun guardar(entidad: Cliente): Cliente {
         val conexion = ConexionH2.obtenerConexion()
         val sql = "INSERT INTO clientes (id, nombre, email, telefono) VALUES (?, ?, ?, ?)"
@@ -21,6 +31,12 @@ class ClienteDao : Repositorio<Cliente, String> {
         return entidad
     }
 
+    /**
+     * Busca un cliente por su identificador.
+     *
+     * @param id El identificador del cliente.
+     * @return El cliente encontrado, o null si no existe.
+     */
     override fun buscarPorId(id: String): Cliente? {
         val conexion = ConexionH2.obtenerConexion()
         val sql = "SELECT * FROM clientes WHERE id = ?"
@@ -40,6 +56,11 @@ class ClienteDao : Repositorio<Cliente, String> {
         return cliente
     }
 
+    /**
+     * Obtiene todos los clientes ordenados por nombre.
+     *
+     * @return Lista con todos los clientes.
+     */
     override fun buscarTodos(): List<Cliente> {
         val conexion = ConexionH2.obtenerConexion()
         val sql = "SELECT * FROM clientes ORDER BY nombre"
@@ -61,6 +82,13 @@ class ClienteDao : Repositorio<Cliente, String> {
         return clientes
     }
 
+    /**
+     * Actualiza los datos de un cliente existente.
+     *
+     * @param entidad El cliente con los datos actualizados.
+     * @return El cliente actualizado.
+     * @throws EntidadNoEncontradaException si no existe un cliente con ese id.
+     */
     override fun actualizar(entidad: Cliente): Cliente {
         val conexion = ConexionH2.obtenerConexion()
         val sql = "UPDATE clientes SET nombre = ?, email = ?, telefono = ? WHERE id = ?"
@@ -77,6 +105,12 @@ class ClienteDao : Repositorio<Cliente, String> {
         return entidad
     }
 
+    /**
+     * Elimina un cliente por su identificador.
+     *
+     * @param id El identificador del cliente a eliminar.
+     * @return true si se eliminó correctamente, false en caso contrario.
+     */
     override fun eliminar(id: String): Boolean {
         val conexion = ConexionH2.obtenerConexion()
         val sql = "DELETE FROM clientes WHERE id = ?"

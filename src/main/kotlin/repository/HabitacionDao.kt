@@ -6,8 +6,18 @@ import org.iesra.util.ConexionH2
 import java.sql.PreparedStatement
 import java.sql.ResultSet
 
+/**
+ * Implementación del repositorio de habitaciones usando una base de datos H2.
+ * Proporciona operaciones CRUD para la entidad [Habitacion] y métodos adicionales de búsqueda.
+ */
 class HabitacionDao : Repositorio<Habitacion, Int> {
 
+    /**
+     * Guarda una nueva habitación en la base de datos.
+     *
+     * @param entidad La habitación a guardar.
+     * @return La habitación guardada.
+     */
     override fun guardar(entidad: Habitacion): Habitacion {
         val conexion = ConexionH2.obtenerConexion()
         val sql = "INSERT INTO habitaciones (numero, tipo, precio_noche, disponible) VALUES (?, ?, ?, ?)"
@@ -21,6 +31,12 @@ class HabitacionDao : Repositorio<Habitacion, Int> {
         return entidad
     }
 
+    /**
+     * Busca una habitación por su número.
+     *
+     * @param id El número de la habitación.
+     * @return La habitación encontrada, o null si no existe.
+     */
     override fun buscarPorId(id: Int): Habitacion? {
         val conexion = ConexionH2.obtenerConexion()
         val sql = "SELECT * FROM habitaciones WHERE numero = ?"
@@ -35,6 +51,11 @@ class HabitacionDao : Repositorio<Habitacion, Int> {
         return habitacion
     }
 
+    /**
+     * Obtiene todas las habitaciones ordenadas por número.
+     *
+     * @return Lista con todas las habitaciones.
+     */
     override fun buscarTodos(): List<Habitacion> {
         val conexion = ConexionH2.obtenerConexion()
         val sql = "SELECT * FROM habitaciones ORDER BY numero"
@@ -49,6 +70,11 @@ class HabitacionDao : Repositorio<Habitacion, Int> {
         return habitaciones
     }
 
+    /**
+     * Obtiene todas las habitaciones disponibles.
+     *
+     * @return Lista de habitaciones disponibles ordenadas por número.
+     */
     fun buscarDisponibles(): List<Habitacion> {
         val conexion = ConexionH2.obtenerConexion()
         val sql = "SELECT * FROM habitaciones WHERE disponible = TRUE ORDER BY numero"
@@ -63,6 +89,13 @@ class HabitacionDao : Repositorio<Habitacion, Int> {
         return habitaciones
     }
 
+    /**
+     * Actualiza los datos de una habitación existente.
+     *
+     * @param entidad La habitación con los datos actualizados.
+     * @return La habitación actualizada.
+     * @throws EntidadNoEncontradaException si no existe una habitación con ese número.
+     */
     override fun actualizar(entidad: Habitacion): Habitacion {
         val conexion = ConexionH2.obtenerConexion()
         val sql = "UPDATE habitaciones SET tipo = ?, precio_noche = ?, disponible = ? WHERE numero = ?"
@@ -79,6 +112,12 @@ class HabitacionDao : Repositorio<Habitacion, Int> {
         return entidad
     }
 
+    /**
+     * Elimina una habitación por su número.
+     *
+     * @param id El número de la habitación a eliminar.
+     * @return true si se eliminó correctamente, false en caso contrario.
+     */
     override fun eliminar(id: Int): Boolean {
         val conexion = ConexionH2.obtenerConexion()
         val sql = "DELETE FROM habitaciones WHERE numero = ?"
@@ -89,6 +128,12 @@ class HabitacionDao : Repositorio<Habitacion, Int> {
         return filasAfectadas > 0
     }
 
+    /**
+     * Convierte un [ResultSet] en una entidad [Habitacion].
+     *
+     * @param r El resultado de la consulta SQL.
+     * @return La entidad [Habitacion] construida a partir del resultado.
+     */
     private fun resultadoAEntidad(r: ResultSet): Habitacion {
         return Habitacion(
             numero = r.getInt("numero"),
