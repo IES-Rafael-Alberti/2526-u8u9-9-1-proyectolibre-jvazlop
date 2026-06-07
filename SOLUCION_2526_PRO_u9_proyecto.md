@@ -146,7 +146,6 @@
 
 | Problema | Solucion aplicada | Enlace o evidencia |
 |----------|-------------------|--------------------|
-| Gson no sabe serializar LocalDateTime | Cambiar exportacion a TXT en vez de JSON | `repository/FicheroRepository.kt` |
 | MongoDB no se conectaba por la URI | Revisar la cadena de conexion en ConexionMongo | `util/ConexionMongo.kt` |
 | Las reservas no se podian crear con fecha pasada | Validacion en ReservaService (fecha>=hoy) | `service/ReservaService.kt` |
 
@@ -163,36 +162,56 @@ El proyecto GESTOR HOTEL es un sistema de gestion de reservas para un hotel. Res
 ### 9.2. Clases y objetos
 
 Las clases principales son `Cliente`, `Habitacion`, `Reserva`, `Incidencia` y `ComentarioCliente` en `model/`. Todas son `data class` porque su funcion es almacenar datos. Los servicios (`ClienteService`, `ReservaService`) tienen la logica de negocio. Los DAO y repositorios gestionan la persistencia. En `app/Menu.kt` se instancian los servicios y el repositorio de ficheros.
+https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/61fb1f8c86ae64af3cd5d5e927eb6a61319b7440/src/main/kotlin/model/Cliente.kt#L3-L8
+https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/61fb1f8c86ae64af3cd5d5e927eb6a61319b7440/src/main/kotlin/model/ComentarioCliente.kt#L5-L9
+https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/61fb1f8c86ae64af3cd5d5e927eb6a61319b7440/src/main/kotlin/model/Habitacion.kt#L3-L7
+https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/61fb1f8c86ae64af3cd5d5e927eb6a61319b7440/src/main/kotlin/model/Incidencia.kt#L5-L11
+https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/61fb1f8c86ae64af3cd5d5e927eb6a61319b7440/src/main/kotlin/model/Reserva.kt#L5-L14
 
 ### 9.3. Encapsulacion y visibilidad
 
 Las propiedades de las data classes son `val` (inmutables) o `var` (modificables como `estado` y `pagada` en Reserva). Las constantes como `ESTADO_PENDIENTE`, `ESTADO_CONFIRMADA`, etc. son `const val` dentro del companion object de `Reserva` (`model/Reserva.kt`). Los servicios encapsulan la logica y llaman a los validadores antes de modificar datos.
+https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/61fb1f8c86ae64af3cd5d5e927eb6a61319b7440/src/main/kotlin/model/Reserva.kt#L5-L22
 
 ### 9.4. Colecciones
 
 Se usa `List<T>` para devolver resultados (ej: `reservaService.listarReservas()` devuelve `List<Reserva>`). En los DAO se usa `MutableList` internamente para ir agregando filas del `ResultSet` (ej: `repository/ClienteDao.kt`). La eleccion es `List` por ser la interfaz mas simple y adecuada para datos de solo lectura.
 
+https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/61fb1f8c86ae64af3cd5d5e927eb6a61319b7440/src/main/kotlin/repository/ClienteDao.kt#L43-L48
+
 ### 9.5. Genericos
 
 La interfaz `Repositorio<T, ID>` es generica con dos parametros: el tipo de entidad `T` y el tipo de identificador `ID`. Define metodos como `guardar(T): T`, `buscarPorId(ID): T?`, `buscarTodos(): List<T>`, `actualizar(T): T`, `eliminar(ID): Boolean`. Esto permite que `ClienteDao` use `Repositorio<Cliente, String>`, `ReservaDao` use `Repositorio<Reserva, Int>`, etc. sin repetir codigo.
+https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/61fb1f8c86ae64af3cd5d5e927eb6a61319b7440/src/main/kotlin/repository/Repositorio.kt#L3-L9
 
 ### 9.6. Herencia, interfaces o clases abstractas
 
-`Repositorio<T, ID>` es una interfaz (no clase abstracta). `ClienteDao`, `ReservaDao`, `HabitacionDao` e `IncidenciaRepository`  la implementan. Esto permite polimorfismo: los servicios pueden trabajar con cualquier implementacion (DIP).
+`Repositorio<T, ID>` es una interfaz. `ClienteDao`, `ReservaDao`, `HabitacionDao` e `IncidenciaRepository`  la implementan. Esto permite polimorfismo: los servicios pueden trabajar con cualquier implementacion (DIP).
 
+https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/61fb1f8c86ae64af3cd5d5e927eb6a61319b7440/src/main/kotlin/repository/Repositorio.kt#L3-L9
+https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/61fb1f8c86ae64af3cd5d5e927eb6a61319b7440/src/main/kotlin/repository/ClienteDao.kt#L9
+https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/61fb1f8c86ae64af3cd5d5e927eb6a61319b7440/src/main/kotlin/repository/HabitacionDao.kt#L9
+https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/61fb1f8c86ae64af3cd5d5e927eb6a61319b7440/src/main/kotlin/repository/ReservaDao.kt#L11
+https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/61fb1f8c86ae64af3cd5d5e927eb6a61319b7440/src/main/kotlin/repository/IncidenciaRepository.kt#L12
 ### 9.7. Expresiones regulares
 
-En `validator/Validador.kt:5`:
+En `validator/Validador.kt`:
 - **Email:** `^[\w.-]+@[\w.-]+\.\w{2,}$` - Valido: `juan@email.com`, No valido: `juan@.com`
 - **Telefono:** `^\+?\d{9,15}$` - Valido: `+34612345678`, No valido: `abc123`
 - **NIF:** `^\d{8}[A-Z]$` mas modulo 23 con `LETRAS_NIF = "TRWAGMYFPDXBNJZSQVHLCKE"` - Valido: `12345678Z`, No valido: `12345678A` (letra incorrecta)
 
+https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/61fb1f8c86ae64af3cd5d5e927eb6a61319b7440/src/main/kotlin/validator/Validador.kt#L5-L11
+
 ### 9.8. Ficheros
 
 `FicheroRepository`. Metodos:
-- `importarDatosPrueba(ruta)` - lee JSON con clientes y reservas usando Gson (`repository/FicheroRepository.kt`)
-- `generarInformeReservas(reservas, ruta)` - genera TXT con listado de reservas (`repository/FicheroRepository.kt`)
-- `exportarIncidenciasATxt(incidencias, ruta)` - genera TXT con incidencias (`repository/FicheroRepository.kt`)
+- `importarDatosPrueba(ruta)` - lee JSON con clientes y reservas usando Gson
+  https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/61fb1f8c86ae64af3cd5d5e927eb6a61319b7440/src/main/kotlin/repository/FicheroRepository.kt#L64-L72
+- `generarInformeReservas(reservas, ruta)` - genera TXT con listado de reservas
+  https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/61fb1f8c86ae64af3cd5d5e927eb6a61319b7440/src/main/kotlin/repository/FicheroRepository.kt#L47-L62
+- `exportarIncidenciasATxt(incidencias, ruta)` - genera TXT con incidencias
+  https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/61fb1f8c86ae64af3cd5d5e927eb6a61319b7440/src/main/kotlin/repository/FicheroRepository.kt#L73-L88
+  
 Si falla se lanza `FicheroException`. Los errores se capturan en `app/Menu.kt`.
 
 ### 9.9. MongoDB
