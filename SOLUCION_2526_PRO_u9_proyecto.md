@@ -274,12 +274,22 @@ En `build.gradle.kts`:
 
 ### 9.14. Pruebas y evidencias
 
-Pruebas manuales ejecutando la aplicacion y probando cada opcion del menu. Los datos de prueba se importan desde `datos_prueba.json` (opcion 5 -> 1). Se puede verificar:
+Pruebas manuales ejecutando la aplicacion y probando cada opcion del menu. 
+![ejemploM1.png](Capturas/ejemploM1.png)
+![ejemplom2.png](Capturas/ejemplom2.png)
+![ejemplom3.png](Capturas/ejemplom3.png)
 - CRUD de clientes (opcion 3), reservas (opcion 2), incidencias (opcion 4)
+![crudcliente.png](Capturas/crudcliente.png)
+![CRUDreserva.png](Capturas/CRUDreserva.png)
+![crudincidencia.png](Capturas/crudincidencia.png)
 - Check-in (opcion 1) y check-out (opcion 6)
+![Checking.png](Capturas/Checking.png)
+![checkout.png](Capturas/checkout.png)
 - Importacion y exportacion (opcion 5)
+![imports.png](Capturas/imports.png)
+![export.png](Capturas/export.png)
 - Los ficheros TXT se generan en la raiz del proyecto
-
+![txt.png](Capturas/txt.png)
 ### 9.15. Refactorizacion y codigo limpio
 
 Los menus se extrajeron a funciones separadas: `nuevaReserva`, `menuReservas`, `menuClientes`, `menuIncidencias`, `menuImportarExportar`, `checkout` en `app/Menu.kt`. Esto evita un main de 500+ lineas. Nombres de variables descriptivos, estructura de paquetes clara, sin codigo repetido.
