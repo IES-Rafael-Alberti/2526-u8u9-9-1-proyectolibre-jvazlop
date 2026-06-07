@@ -91,7 +91,7 @@
 ### Base de datos relacional
 
 - **SGBD utilizado:** H2 en modo embebido, fichero `data/gestorhotel.mv.db`.
-- **Script SQL:** No hay fichero SQL separado, las tablas se crean desde `util/ConexionH2.kt` con sentencias CREATE TABLE IF NOT EXISTS.
+- **Script SQL:** `sql/Script.sql` con las sentencias CREATE TABLE de clientes, habitaciones y reservas.
 - **Tablas y relaciones:**
   - `clientes` (id VARCHAR PRIMARY KEY, nombre, email, telefono)
   - `habitaciones` (numero INT PRIMARY KEY, tipo, precio_noche, disponible)
