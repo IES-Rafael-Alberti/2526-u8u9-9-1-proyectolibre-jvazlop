@@ -57,6 +57,7 @@
 - **Principios SOLID aplicados:**
   - **SRP:** `ClienteDao` solo accede a clientes, `Validador` solo valida, `ReservaService` solo tiene logica de reservas. Cada clase hace una cosa y solo una.
   - **OCP:** La interfaz `Repositorio<T, ID>` permite anadir nuevas entidades (como `ComentarioClienteRepository`) sin modificar el codigo existente de la interfaz.
+  - **LSP:** Cualquier implementacion de `Repositorio<T, ID>` (H2 con `ClienteDao`, MongoDB con `IncidenciaRepository`) se puede intercambiar sin que los servicios se enteren.
   - **ISP:** Las funciones del menu (`nuevaReserva`, `menuIncidencias`, `checkout`) solo dependen de los servicios que realmente necesitan, no de todos. `nuevaReserva` no recibe `IncidenciaService`, `menuIncidencias` no recibe `ReservaService`.
   - **DIP:** Los servicios reciben `Repositorio<T, ID>` por constructor, no una clase concreta.
 - **Patrones de diseno:**
@@ -255,7 +256,10 @@ https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/e
   
 - **OCP:** La interfaz `Repositorio<T, ID>` permite extender el sistema anadiendo nuevos DAOs o repositorios sin modificar el codigo existente. Por ejemplo, se anadio `ComentarioClienteRepository` implementando la misma interfaz sin tocar `Repositorio`.
   https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/943ddf447dbb9bc99c15f9b86bfed676d9f74ddc/src/main/kotlin/repository/Repositorio.kt#L3
-  
+   
+- **LSP:** Todas las implementaciones de `Repositorio<T, ID>` (`ClienteDao`, `ReservaDao`, `IncidenciaRepository`) son intercambiables. Los servicios funcionan con cualquiera porque dependen de la abstraccion, no de la implementacion concreta.
+  https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/e620634896ad63addf9e6467c6b394d413b87659/src/main/kotlin/service/IncidenciaService.kt#L14-L15
+   
 - **ISP:** Las funciones del menu estan separadas para que cada una solo reciba los servicios que necesita. `nuevaReserva(clienteService, reservaService)` no recibe `IncidenciaService`. `menuIncidencias(incidenciaService)` no recibe servicios de clientes. Ninguna funcion depende de metodos que no usa.
 https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/e620634896ad63addf9e6467c6b394d413b87659/src/main/kotlin/app/MenuNuevaReserva.kt#L17-L53
   

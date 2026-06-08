@@ -84,9 +84,7 @@ class ReservaService(
      * @return Lista de reservas del cliente
      */
     fun listarReservasPorCliente(idCliente: String): List<Reserva> {
-        val dao = repositorio as? ReservaDao
-            ?: return repositorio.buscarTodos().filter { it.idCliente == idCliente }
-        return dao.buscarPorCliente(idCliente)
+        return repositorio.buscarTodos().filter { it.idCliente == idCliente }
     }
 
     /**

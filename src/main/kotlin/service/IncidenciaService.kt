@@ -54,9 +54,7 @@ class IncidenciaService(
      * @return Lista de incidencias de la habitación
      */
     fun listarIncidenciasPorHabitacion(numeroHabitacion: Int): List<Incidencia> {
-        val repo = repositorio as? IncidenciaRepository
-            ?: return repositorio.buscarTodos().filter { it.numeroHabitacion == numeroHabitacion }
-        return repo.buscarPorHabitacion(numeroHabitacion)
+        return repositorio.buscarTodos().filter { it.numeroHabitacion == numeroHabitacion }
     }
 
     /**
@@ -64,9 +62,7 @@ class IncidenciaService(
      * @return Lista de incidencias pendientes
      */
     fun listarIncidenciasNoResueltas(): List<Incidencia> {
-        val repo = repositorio as? IncidenciaRepository
-            ?: return repositorio.buscarTodos().filter { !it.resuelta }
-        return repo.buscarNoResueltas()
+        return repositorio.buscarTodos().filter { !it.resuelta }
     }
 
     /**
