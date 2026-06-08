@@ -1,0 +1,132 @@
+{
+  "clientes": [
+    {
+      "id": "12345678Z",
+      "nombre": "Juan Perez Lopez",
+      "email": "juan@email.com",
+      "telefono": "612345678"
+    },
+    {
+      "id": "87654321X",
+      "nombre": "Maria Garcia Ruiz",
+      "email": "maria@email.com",
+      "telefono": "698765432"
+    },
+    {
+      "id": "11111111H",
+      "nombre": "Carlos Martinez Sanchez",
+      "email": "carlos@email.com",
+      "telefono": "655443322"
+    },
+    {
+      "id": "22222222J",
+      "nombre": "Ana Fernandez Lopez",
+      "email": "ana@email.com",
+      "telefono": "677889900"
+    },
+    {
+      "id": "33333333P",
+      "nombre": "Laura Moreno Diaz",
+      "email": "laura@email.com",
+      "telefono": "634567890"
+    },
+    {
+      "id": "44444444A",
+      "nombre": "Pedro Sanchez Gil",
+      "email": "pedro@email.com",
+      "telefono": "622334455"
+    },
+    {
+      "id": "55555555K",
+      "nombre": "Sofia Ramirez Vega",
+      "email": "sofia@email.com",
+      "telefono": "688776655"
+    },
+    {
+      "id": "66666666Q",
+      "nombre": "David Torres Gomez",
+      "email": "david@email.com",
+      "telefono": "611223344"
+    },
+    {
+      "id": "77777777B",
+      "nombre": "Elena Navarro Cruz",
+      "email": "elena@email.com",
+      "telefono": "699887766"
+    },
+    {
+      "id": "88888888Y",
+      "nombre": "Javier Molina Rojas",
+      "email": "javier@email.com",
+      "telefono": "644556677"
+    }
+  ],
+  "reservas": [
+    {
+      "idCliente": "12345678Z",
+      "numeroHabitacion": 101,
+      "fechaEntrada": "2026-06-07",
+      "fechaSalida": "2026-06-09"
+    },
+    {
+      "idCliente": "87654321X",
+      "numeroHabitacion": 202,
+      "fechaEntrada": "2026-06-07",
+      "fechaSalida": "2026-06-08"
+    },
+    {
+      "idCliente": "11111111H",
+      "numeroHabitacion": 303,
+      "fechaEntrada": "2026-06-07",
+      "fechaSalida": "2026-06-12"
+    },
+    {
+      "idCliente": "22222222J",
+      "numeroHabitacion": 104,
+      "fechaEntrada": "2026-06-08",
+      "fechaSalida": "2026-06-10"
+    },
+    {
+      "idCliente": "12345678Z",
+      "numeroHabitacion": 205,
+      "fechaEntrada": "2026-06-10",
+      "fechaSalida": "2026-06-12"
+    },
+    {
+      "idCliente": "33333333P",
+      "numeroHabitacion": 301,
+      "fechaEntrada": "2026-06-07",
+      "fechaSalida": "2026-06-11"
+    },
+    {
+      "idCliente": "44444444A",
+      "numeroHabitacion": 102,
+      "fechaEntrada": "2026-06-07",
+      "fechaSalida": "2026-06-08"
+    },
+    {
+      "idCliente": "55555555K",
+      "numeroHabitacion": 203,
+      "fechaEntrada": "2026-06-08",
+      "fechaSalida": "2026-06-10"
+    },
+    {
+      "idCliente": "66666666Q",
+      "numeroHabitacion": 304,
+      "fechaEntrada": "2026-06-07",
+      "fechaSalida": "2026-06-10"
+    },
+    {
+      "idCliente": "77777777B",
+      "numeroHabitacion": 105,
+      "fechaEntrada": "2026-06-08",
+      "fechaSalida": "2026-06-11"
+    },
+    {
+      "idCliente": "88888888Y",
+      "numeroHabitacion": 206,
+      "fechaEntrada": "2026-06-07",
+      "fechaSalida": "2026-06-11"
+    }
+  ]
+}

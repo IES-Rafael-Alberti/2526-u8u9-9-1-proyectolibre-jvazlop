@@ -1,0 +1,39 @@
+INFORME DE RESERVAS - GESTOR HOTEL
+==================================================
+Total de reservas: 12
+
+ID: 65 | Cliente: 49193830G | Habitacion: 102
+  Entrada: 2027-04-12 | Salida: 2027-05-12 | Estado: pendiente
+
+ID: 1 | Cliente: 12345678Z | Habitacion: 205
+  Entrada: 2026-06-10 | Salida: 2026-06-12 | Estado: pendiente
+
+ID: 3 | Cliente: 77777777B | Habitacion: 105
+  Entrada: 2026-06-08 | Salida: 2026-06-11 | Estado: pendiente
+
+ID: 36 | Cliente: 22222222J | Habitacion: 104
+  Entrada: 2026-06-08 | Salida: 2026-06-10 | Estado: pendiente
+
+ID: 39 | Cliente: 55555555K | Habitacion: 203
+  Entrada: 2026-06-08 | Salida: 2026-06-10 | Estado: pendiente
+
+ID: 2 | Cliente: 66666666Q | Habitacion: 304
+  Entrada: 2026-06-07 | Salida: 2026-06-10 | Estado: finalizada
+
+ID: 33 | Cliente: 12345678Z | Habitacion: 101
+  Entrada: 2026-06-07 | Salida: 2026-06-09 | Estado: pendiente
+
+ID: 34 | Cliente: 87654321X | Habitacion: 202
+  Entrada: 2026-06-07 | Salida: 2026-06-08 | Estado: pendiente
+
+ID: 35 | Cliente: 11111111H | Habitacion: 303
+  Entrada: 2026-06-07 | Salida: 2026-06-12 | Estado: pendiente
+
+ID: 37 | Cliente: 33333333P | Habitacion: 301
+  Entrada: 2026-06-07 | Salida: 2026-06-11 | Estado: pendiente
+
+ID: 38 | Cliente: 44444444A | Habitacion: 102
+  Entrada: 2026-06-07 | Salida: 2026-06-08 | Estado: pendiente
+
+ID: 40 | Cliente: 88888888Y | Habitacion: 206
+  Entrada: 2026-06-07 | Salida: 2026-06-11 | Estado: pendiente
