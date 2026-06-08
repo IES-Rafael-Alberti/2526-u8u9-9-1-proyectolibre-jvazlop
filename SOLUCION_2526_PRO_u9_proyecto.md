@@ -57,9 +57,8 @@
 - **Principios SOLID aplicados:**
   - **SRP:** `ClienteDao` solo accede a clientes, `Validador` solo valida, `ReservaService` solo tiene logica de reservas. Cada clase hace una cosa y solo una.
   - **OCP:** La interfaz `Repositorio<T, ID>` permite anadir nuevas entidades (como `ComentarioClienteRepository`) sin modificar el codigo existente de la interfaz.
-  - **LSP:** Cualquier implementacion de `Repositorio<T, ID>` (H2 con `ClienteDao`, MongoDB con `IncidenciaRepository`) se puede intercambiar sin que los servicios se enteren.
   - **ISP:** Las funciones del menu (`nuevaReserva`, `menuIncidencias`, `checkout`) solo dependen de los servicios que realmente necesitan, no de todos. `nuevaReserva` no recibe `IncidenciaService`, `menuIncidencias` no recibe `ReservaService`.
-  - **DIP:** Los servicios reciben `Repositorio<T, ID>` por constructor, no una clase concreta. Ver `service/ClienteService.kt:10`.
+  - **DIP:** Los servicios reciben `Repositorio<T, ID>` por constructor, no una clase concreta.
 - **Patrones de diseno:**
   - **DAO:** `ClienteDao`, `ReservaDao`, `HabitacionDao` para separar el SQL de la logica
   - **Repository:** `IncidenciaRepository` y `ComentarioClienteRepository` para MongoDB
@@ -208,12 +207,15 @@ https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/6
 
 `FicheroRepository`. Metodos:
 - `importarDatosPrueba(ruta)` - lee JSON con clientes y reservas usando Gson
-  https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/61fb1f8c86ae64af3cd5d5e927eb6a61319b7440/src/main/kotlin/repository/FicheroRepository.kt#L64-L72
+
 - `generarInformeReservas(reservas, ruta)` - genera TXT con listado de reservas
-  https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/61fb1f8c86ae64af3cd5d5e927eb6a61319b7440/src/main/kotlin/repository/FicheroRepository.kt#L47-L62
+https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/e620634896ad63addf9e6467c6b394d413b87659/src/main/kotlin/repository/ExportadorFicheros.kt#L29-L46
+
 - `exportarIncidenciasATxt(incidencias, ruta)` - genera TXT con incidencias
-  https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/61fb1f8c86ae64af3cd5d5e927eb6a61319b7440/src/main/kotlin/repository/FicheroRepository.kt#L73-L88
-  
+https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/e620634896ad63addf9e6467c6b394d413b87659/src/main/kotlin/repository/ExportadorFicheros.kt#L47-L65
+
+- `exportarClientesAJson(clientes, ruta)` - genera un json con los clientes
+  https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/e620634896ad63addf9e6467c6b394d413b87659/src/main/kotlin/repository/ExportadorFicheros.kt#L19-L28
 Si falla se lanza `FicheroException`. Los errores se capturan en `app/Menu.kt`.
 
 ### 9.9. MongoDB
@@ -244,7 +246,7 @@ Excepciones propias en `exception/Excepciones.kt:`:
 https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/943ddf447dbb9bc99c15f9b86bfed676d9f74ddc/src/main/kotlin/exception/Excepciones.kt#L3-L11
 
 Se capturan en los menus con try-catch mostrando mensajes al usuario. Ej: `app/Menu.kt` captura `EntidadNoEncontradaException` en checkout.
-https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/943ddf447dbb9bc99c15f9b86bfed676d9f74ddc/src/main/kotlin/app/Menu.kt#L614-L665
+https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/e620634896ad63addf9e6467c6b394d413b87659/src/main/kotlin/app/MenuCheckout.kt#L60-L68
 
 ### 9.12. SOLID y buenas practicas
 
@@ -254,11 +256,8 @@ https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/9
 - **OCP:** La interfaz `Repositorio<T, ID>` permite extender el sistema anadiendo nuevos DAOs o repositorios sin modificar el codigo existente. Por ejemplo, se anadio `ComentarioClienteRepository` implementando la misma interfaz sin tocar `Repositorio`.
   https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/943ddf447dbb9bc99c15f9b86bfed676d9f74ddc/src/main/kotlin/repository/Repositorio.kt#L3
   
-- **LSP:** Todas las implementaciones de `Repositorio<T, ID>` (`ClienteDao`, `ReservaDao`, `IncidenciaRepository`) son intercambiables. Los servicios funcionan con cualquiera porque dependen de la abstraccion, no de la implementacion concreta.
-  https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/943ddf447dbb9bc99c15f9b86bfed676d9f74ddc/src/main/kotlin/repository/ReservaDao.kt#L11
-  
 - **ISP:** Las funciones del menu estan separadas para que cada una solo reciba los servicios que necesita. `nuevaReserva(clienteService, reservaService)` no recibe `IncidenciaService`. `menuIncidencias(incidenciaService)` no recibe servicios de clientes. Ninguna funcion depende de metodos que no usa.
-  https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/943ddf447dbb9bc99c15f9b86bfed676d9f74ddc/src/main/kotlin/app/Menu.kt#L190
+https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/e620634896ad63addf9e6467c6b394d413b87659/src/main/kotlin/app/MenuNuevaReserva.kt#L17-L53
   
 - **DIP:** Los servicios reciben `Repositorio<T, ID>` en su constructor como parametro, no instancian directamente clases concretas. Esto permite cambiar la implementacion (H2, MongoDB, ficheros) sin modificar el servicio.
 https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/943ddf447dbb9bc99c15f9b86bfed676d9f74ddc/src/main/kotlin/service/ClienteService.kt#L9
@@ -290,8 +289,8 @@ Pruebas manuales ejecutando la aplicacion y probando cada opcion del menu.
 - Importacion y exportacion (opcion 5)
 ![imports.png](Capturas/imports.png)
 ![export.png](Capturas/export.png)
-- Los ficheros TXT se generan en la raiz del proyecto
-![txt.png](Capturas/txt.png)
+- Los ficheros TXT  y json se generan en la carpeta exportaciones del proyecto
+
 ### 9.15. Refactorizacion y codigo limpio
 
 Los menus se extrajeron a funciones separadas: `nuevaReserva`, `menuReservas`, `menuClientes`, `menuIncidencias`, `menuImportarExportar`, `checkout` en `app/Menu.kt`. Esto evita un main de 500+ lineas. Nombres de variables descriptivos, estructura de paquetes clara, sin codigo repetido.
@@ -299,7 +298,7 @@ https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/9
 
 Todo lo que tiene que ver con menus se guarda en app/menu.kt.Ejemplo codigo
 
-https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/943ddf447dbb9bc99c15f9b86bfed676d9f74ddc/src/main/kotlin/app/Menu.kt#L17-L43
+https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-jvazlop/blob/e620634896ad63addf9e6467c6b394d413b87659/src/main/kotlin/app/Menu.kt#L15-L52
 
 ### 9.16. Patrones de diseno
 
@@ -324,7 +323,7 @@ Git con commits incrementales: cada commit anade una funcionalidad completa (mod
 ## 10. Conclusiones
 
 - **Que he aprendido:** A integrar tres tipos de persistencia (H2, MongoDB, ficheros) en una misma app Kotlin, usar genericos con `Repositorio<T, ID>`, aplicar SRP y DIP, y hacer validaciones con expresiones regulares.
-- **Que mejoraria si tuviera mas tiempo:** Pruebas automatizadas con Kotest, validar disponibilidad de habitaciones por fechas, interfaz grafica, y mas control de errores en la entrada de datos y base de datos real de habitaciones.
+- **Que mejoraria si tuviera mas tiempo:** Pruebas automatizadas con Kotest, interfaz grafica, y mas control de errores en la entrada de datos y base de datos real de habitaciones siguiendo de ejemplo hoteles reales para precios y tipo.
 - **Decision tecnica mas importante:** Usar H2 embebido como BD relacional para que no haga falta instalar nada externo, y MongoDB Atlas para las incidencias porque es una coleccion que crece mucho y no necesita relaciones.
 
 ## 11. Autoevaluacion
