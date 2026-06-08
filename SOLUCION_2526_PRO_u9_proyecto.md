@@ -290,7 +290,7 @@ Pruebas manuales ejecutando la aplicacion y probando cada opcion del menu.
 ![imports.png](Capturas/imports.png)
 ![export.png](Capturas/export.png)
 - Los ficheros TXT  y json se generan en la carpeta exportaciones del proyecto
-
+![exportjsontxt.png](Capturas/exportjsontxt.png)
 ### 9.15. Refactorizacion y codigo limpio
 
 Los menus se extrajeron a funciones separadas: `nuevaReserva`, `menuReservas`, `menuClientes`, `menuIncidencias`, `menuImportarExportar`, `checkout` en `app/Menu.kt`. Esto evita un main de 500+ lineas. Nombres de variables descriptivos, estructura de paquetes clara, sin codigo repetido.
